@@ -6,33 +6,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using pong.Animations;
 
 namespace pong
 {
     class Hero:IGameObject
     {
         Texture2D Herotexture;
-        private Rectangle deelrectangle;
-        private int schuifOp_X = 0;
+        Animatie animatie;
+        
         public Hero(Texture2D texture)
         {
             Herotexture = texture;
-            deelrectangle = new Rectangle(schuifOp_X, 0, 32, 32);
-
+            animatie = new Animatie();
+            animatie.AddFrame(new AnimationFrames(new Rectangle(0, 0, 32, 32)));
+            animatie.AddFrame(new AnimationFrames(new Rectangle(32, 0, 32, 32)));
+            animatie.AddFrame(new AnimationFrames(new Rectangle(64, 0, 32, 32)));
+            animatie.AddFrame(new AnimationFrames(new Rectangle(96, 0, 32, 32)));
+            animatie.AddFrame(new AnimationFrames(new Rectangle(128, 0, 32, 32)));
+            animatie.AddFrame(new AnimationFrames(new Rectangle(160, 0, 32, 32)));
+            animatie.AddFrame(new AnimationFrames(new Rectangle(192, 0, 32, 32)));
+            animatie.AddFrame(new AnimationFrames(new Rectangle(224, 0, 32, 32)));
         }
 
         public void Update()
         {
-            schuifOp_X += 32;
-            if (schuifOp_X > 256)
-            {
-                schuifOp_X = 0;
-            }
-            deelrectangle.X = schuifOp_X;
+            animatie.Update();
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Herotexture, new Vector2(10,10), deelrectangle, Color.White);
+            spriteBatch.Draw(Herotexture, new Vector2(10,10), animatie.CurrentFrame.SourceRectangle, Color.White);
         }
     }
 }
