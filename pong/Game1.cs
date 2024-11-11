@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using pong.Input;
 using System;
 
 namespace pong
@@ -37,7 +38,7 @@ namespace pong
 
         private void InitializeGameObject()
         {
-            hero = new Hero(_texture);
+            hero = new Hero(_texture, new KeyBoardReader());
         }
 
         protected override void Update(GameTime gameTime)
