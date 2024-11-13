@@ -19,7 +19,9 @@ namespace pong
         private Vector2 positie;
         private Vector2 snelheid;
         private IInputReader inputReader;
-
+        // Frame timer variabelen
+        private float frameTimer;
+        private float frameDuration; // Duur per frame, bepaalt de snelheid
 
 
         public Hero(Texture2D texture, IInputReader inputReader)
@@ -29,21 +31,41 @@ namespace pong
             animatie = new Animatie();
             positie = new Vector2(1, 1);
             snelheid = new Vector2(2, 2);
-            animatie.AddFrame(new AnimationFrames(new Rectangle(0, 0, 32, 32)));
-            animatie.AddFrame(new AnimationFrames(new Rectangle(32, 0, 32, 32)));
-            animatie.AddFrame(new AnimationFrames(new Rectangle(64, 0, 32, 32)));
-            animatie.AddFrame(new AnimationFrames(new Rectangle(96, 0, 32, 32)));
-            animatie.AddFrame(new AnimationFrames(new Rectangle(128, 0, 32, 32)));
-            animatie.AddFrame(new AnimationFrames(new Rectangle(160, 0, 32, 32)));
-            animatie.AddFrame(new AnimationFrames(new Rectangle(192, 0, 32, 32)));
-            animatie.AddFrame(new AnimationFrames(new Rectangle(224, 0, 32, 32)));
+            frameTimer = 0f;
+            frameDuration = 0.1f;
+            //idle animaties
+            animatie.AddFrame(ActionType.Idle,new AnimationFrames(new Rectangle(0, 0, 32, 32)));
+            animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(32, 0, 32, 32)));
+            animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(64, 0, 32, 32)));
+            animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(96, 0, 32, 32)));
+            animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(128, 0, 32, 32)));
+            animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(160, 0, 32, 32)));
+            animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(192, 0, 32, 32)));
+            animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(224, 0, 32, 32)));
+            //walk animaties
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(0, 32, 32, 32)));
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(32, 32, 32, 32)));
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(64, 32, 32, 32)));
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(96, 32, 32, 32)));
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(128, 32, 32, 32)));
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(160, 32, 32, 32)));
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(192, 32, 32, 32)));
+            animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(224, 32, 32, 32)));
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             //MoveWithMouse();
             Move();
-            animatie.Update();
+            // Verhoog de frame timer met de verstreken tijd sinds de laatste update
+            frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Als de frame timer de ingestelde frame duur overschrijdt, ga dan naar de volgende frame
+            if (frameTimer >= frameDuration)
+            {
+                animatie.Update(); // Update de animatie
+                frameTimer = 0f; // Reset de timer
+            }
         }
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -53,8 +75,18 @@ namespace pong
         public void Move()
         {
             var direction = inputReader.ReadInput();
-            direction *= snelheid;
-            positie += direction;
+            if (direction != Vector2.Zero)
+            {
+                // Move the hero and set to "Walk" animation if there is input
+                direction *= snelheid;
+                positie += direction;
+                animatie.SetAction(ActionType.Walk);
+            }
+            else
+            {
+                // Set to "Idle" animation if there is no input
+                animatie.SetAction(ActionType.Idle);
+            }
         }
         public void MoveWithMouse()
         {
