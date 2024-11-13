@@ -75,16 +75,24 @@ namespace pong
         public void Move()
         {
             var direction = inputReader.ReadInput();
-            if (direction != Vector2.Zero)
+            var toekomstigePositie = positie + direction;
+            if ((toekomstigePositie.X < (800 - 32) && toekomstigePositie.X > 0) && (toekomstigePositie.Y < 480 - 32 && toekomstigePositie.Y > 0))
             {
-                // Move the hero and set to "Walk" animation if there is input
-                direction *= snelheid;
-                positie += direction;
-                animatie.SetAction(ActionType.Walk);
+                if (direction != Vector2.Zero)
+                {
+                    // Move the hero and set to "Walk" animation if there is input
+                    direction *= snelheid;
+                    positie += direction;
+                    animatie.SetAction(ActionType.Walk);
+                }
+                else
+                {
+                    // Set to "Idle" animation if there is no input
+                    animatie.SetAction(ActionType.Idle);
+                }
             }
             else
             {
-                // Set to "Idle" animation if there is no input
                 animatie.SetAction(ActionType.Idle);
             }
         }
