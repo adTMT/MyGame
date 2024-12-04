@@ -2,8 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using pong.Input;
+using pong.Levels;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection.Emit;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace pong
@@ -22,6 +25,9 @@ namespace pong
         Color backgroundColor = Color.CornflowerBlue;
         //hitboxtexture
         Texture2D HitboxTexture;
+        //level
+        Level1 level; // Level-klasse als variabele
+        Texture2D tilesetTexture; // Texture voor de tileset
 
         public Game1()
         {
@@ -50,6 +56,19 @@ namespace pong
             //hitbox
             HitboxTexture = new Texture2D(GraphicsDevice, 1, 1);
             HitboxTexture.SetData(new[] { Color.White });
+            //level
+            Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
+                                                         { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
+                                                         { 1, new Rectangle(16, 16, 16, 16) }}; //muur
+            tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
+            level = new Level1(tilesetTexture, 16, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
+            int[,] levelLayout = new int[,]{
+                                           { 1, 1, 1, 1, 1 },
+                                           { 1, 0, 0, 0, 1 },
+                                           { 1, 0, 0, 0, 1 },
+                                           { 1, 0, 0, 0, 1 },
+                                           { 1, 1, 1, 1, 1 } };
+            level.LoadLevel(levelLayout);
         }
 
         private void InitializeGameObject()
@@ -83,14 +102,10 @@ namespace pong
             GraphicsDevice.Clear(backgroundColor);
             _spriteBatch.Begin();
             // TODO: Add your drawing code here
+            level.Draw(_spriteBatch);
             hero.Draw(_spriteBatch, HitboxTexture);
             _spriteBatch.End();
             base.Draw(gameTime);
-            //blokje
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(blokTexture, blokje, Color.Red);
-            _spriteBatch.Draw(blokTexture, blokje2, Color.Green);
-            _spriteBatch.End();
         }
     }
 }
