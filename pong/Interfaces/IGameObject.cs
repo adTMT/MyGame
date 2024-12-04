@@ -11,6 +11,6 @@ namespace pong.Interfaces
     internal interface IGameObject
     {
         void Update(GameTime gameTime);
-        void Draw(SpriteBatch spriteBatch);
+        void Draw(SpriteBatch spriteBatch,Texture2D heroTexture);
     }
 }

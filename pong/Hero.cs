@@ -15,6 +15,7 @@ namespace pong
     class Hero:IGameObject
     {
         Texture2D Herotexture;
+        Texture2D Hitboxtexture;
         Animatie animatie;
         private Vector2 positie;
         private Vector2 snelheid;
@@ -22,6 +23,19 @@ namespace pong
         // Frame timer variabelen
         private float frameTimer;
         private float frameDuration; // Duur per frame, bepaalt de snelheid
+        public Rectangle Hitbox
+        {
+            get
+            {
+                // Return een rechthoek gebaseerd op de huidige positie en framegrootte
+                return new Rectangle(
+                    (int)positie.X + 6,
+                    (int)positie.Y + 12,
+                    animatie.CurrentFrame.SourceRectangle.Width -4,
+                    animatie.CurrentFrame.SourceRectangle.Height -10
+                );
+            }
+        }
 
 
         public Hero(Texture2D texture, IInputReader inputReader)
@@ -67,10 +81,11 @@ namespace pong
                 frameTimer = 0f; // Reset de timer
             }
         }
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Texture2D hitboxTexture)
         {
             
             spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, Color.White);
+            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
         }
         public void Move()
         {
@@ -106,6 +121,10 @@ namespace pong
             var afteleggenafstand = afstandofrichting * snelheid;
 
             positie += afteleggenafstand;
+        }
+        public bool CheckCollision(Rectangle otherObject)
+        {
+            return Hitbox.Intersects(otherObject);
         }
     }
 }
