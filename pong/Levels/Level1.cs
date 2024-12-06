@@ -49,5 +49,31 @@ namespace pong.Levels
                 }
             }
         }
+        public bool IsCollidingWithWall(Rectangle heroBounds)
+        {
+            for (int y = 0; y < layout.GetLength(0); y++)
+            {
+                for (int x = 0; x < layout.GetLength(1); x++)
+                {
+                    int tileId = layout[y, x];
+                    if (tileId == 1) // 1 staat voor muur in je tileMapping
+                    {
+                        Rectangle tileBounds = new Rectangle(
+                            x * tileSize, // Berekent de tegelpositie op het scherm
+                            y * tileSize,
+                            tileSize,
+                            tileSize
+                        );
+
+                        if (tileBounds.Intersects(heroBounds))
+                        {
+                            return true; // Er is een botsing
+                        }
+                    }
+                }
+            }
+
+            return false; // Geen botsing
+        }
     }
 }

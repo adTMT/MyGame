@@ -61,13 +61,23 @@ namespace pong
                                                          { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
                                                          { 1, new Rectangle(16, 16, 16, 16) }}; //muur
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
-            level = new Level1(tilesetTexture, 16, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
+            level = new Level1(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
             int[,] levelLayout = new int[,]{
-                                           { 1, 1, 1, 1, 1 },
-                                           { 1, 0, 0, 0, 1 },
-                                           { 1, 0, 0, 0, 1 },
-                                           { 1, 0, 0, 0, 1 },
-                                           { 1, 1, 1, 1, 1 } };
+                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 1, 1,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
             level.LoadLevel(levelLayout);
         }
 
@@ -85,7 +95,7 @@ namespace pong
                 Exit();
 
             // TODO: Add your update logic here
-            hero.Update(gameTime);
+            hero.Update(gameTime, level);
             if (hero.CheckCollision(blokje)|| hero.CheckCollision(blokje2))
             {
                 backgroundColor = Color.Black;   

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using pong.Levels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace pong.Interfaces
 {
     internal interface IGameObject
     {
-        void Update(GameTime gameTime);
+        void Update(GameTime gameTime, Level1 level);
         void Draw(SpriteBatch spriteBatch,Texture2D heroTexture);
     }
 }

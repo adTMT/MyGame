@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using pong.Animations;
 using Microsoft.Xna.Framework.Input;
 using pong.Input;
+using pong.Levels;
 
 namespace pong
 {
@@ -67,10 +68,10 @@ namespace pong
             animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(224, 32, 32, 32)));
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Levels.Level1 level)
         {
             //MoveWithMouse();
-            Move();
+            Move(level);
             // Verhoog de frame timer met de verstreken tijd sinds de laatste update
             frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -87,30 +88,47 @@ namespace pong
             spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, Color.White);
             spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
         }
-        public void Move()
+        public void Move(Level1 level)
         {
             var direction = inputReader.ReadInput();
-            var toekomstigePositie = positie + direction;
-            if ((toekomstigePositie.X < (800 - 32) && toekomstigePositie.X > 0) && (toekomstigePositie.Y < 480 - 32 && toekomstigePositie.Y > 0))
+
+            // Controleer of er input is
+            if (direction != Vector2.Zero)
             {
-                if (direction != Vector2.Zero)
+                // Bereken toekomstige positie en toekomstige hitbox
+                Vector2 toekomstigePositie = positie + direction * snelheid;
+                Rectangle toekomstigeHitbox = new Rectangle(
+                    (int)toekomstigePositie.X + 6,
+                    (int)toekomstigePositie.Y + 12,
+                    animatie.CurrentFrame.SourceRectangle.Width - 4,
+                    animatie.CurrentFrame.SourceRectangle.Height - 10
+                );
+
+                // Controleer of de toekomstige positie binnen het scherm ligt en geen botsing heeft
+                bool binnenScherm = toekomstigePositie.X >= 0 &&
+                                    toekomstigePositie.X <= 800 - animatie.CurrentFrame.SourceRectangle.Width &&
+                                    toekomstigePositie.Y >= 0 &&
+                                    toekomstigePositie.Y <= 480 - animatie.CurrentFrame.SourceRectangle.Height;
+
+                if (binnenScherm && !level.IsCollidingWithWall(toekomstigeHitbox))
                 {
-                    // Move the hero and set to "Walk" animation if there is input
-                    direction *= snelheid;
-                    positie += direction;
+                    // Update positie en zet animatie op "Walk"
+                    positie = toekomstigePositie;
                     animatie.SetAction(ActionType.Walk);
                 }
                 else
                 {
-                    // Set to "Idle" animation if there is no input
+                    // Zet animatie op "Idle" als beweging niet mogelijk is
                     animatie.SetAction(ActionType.Idle);
                 }
             }
             else
             {
+                // Geen input: zet animatie op "Idle"
                 animatie.SetAction(ActionType.Idle);
             }
         }
+
         public void MoveWithMouse()
         {
             MouseState state = Mouse.GetState();
