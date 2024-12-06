@@ -24,6 +24,8 @@ namespace pong
         // Frame timer variabelen
         private float frameTimer;
         private float frameDuration; // Duur per frame, bepaalt de snelheid
+        private float attackCooldownTimer = 0f;
+        private float attackCooldown = 0.1f;
         public Rectangle Hitbox
         {
             get
@@ -47,7 +49,7 @@ namespace pong
             positie = new Vector2(1, 1);
             snelheid = new Vector2(2, 2);
             frameTimer = 0f;
-            frameDuration = 0.1f;
+            frameDuration = 0.7f;
             //idle animaties
             animatie.AddFrame(ActionType.Idle,new AnimationFrames(new Rectangle(0, 0, 32, 32)));
             animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(32, 0, 32, 32)));
@@ -66,27 +68,55 @@ namespace pong
             animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(160, 32, 32, 32)));
             animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(192, 32, 32, 32)));
             animatie.AddFrame(ActionType.Walk, new AnimationFrames(new Rectangle(224, 32, 32, 32)));
+            //attack animaties
+            animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(0,  64, 32, 32)));
+            animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(32, 64, 32, 32)));
+            animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(64, 64, 32, 32)));
+            animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(96, 64, 32, 32)));
+            animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(128,64, 32, 32)));
+            animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(160,64, 32, 32)));
         }
 
-        public void Update(GameTime gameTime, Levels.Level1 level)
+        public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
         {
-            //MoveWithMouse();
+            // Verlaag de cooldown timer
+            if (attackCooldownTimer > 0)
+            {
+                attackCooldownTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
             Move(level);
+
             // Verhoog de frame timer met de verstreken tijd sinds de laatste update
             frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            // Specifieke frameDuration voor de aanval animatie (trager)
+            float currentFrameDuration = frameDuration;
+            if (animatie.currentAction == ActionType.Attack)
+            {
+                currentFrameDuration = 0.1f; // Verhoog de frame duur voor de aanval
+            }
+
             // Als de frame timer de ingestelde frame duur overschrijdt, ga dan naar de volgende frame
-            if (frameTimer >= frameDuration)
+            if (frameTimer >= currentFrameDuration)
             {
                 animatie.Update(); // Update de animatie
                 frameTimer = 0f; // Reset de timer
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && attackCooldownTimer <= 0)
+            {
+                Attack(enemies); // Voer de aanval uit
+                animatie.SetAction(ActionType.Attack);
+                animatie.Update();// Zet animatie naar "Attack"
+                attackCooldownTimer = attackCooldown;
             }
         }
         public void Draw(SpriteBatch spriteBatch, Texture2D hitboxTexture)
         {
             
             spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, Color.White);
-            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
+           // spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
         }
         public void Move(Level1 level)
         {
@@ -143,6 +173,26 @@ namespace pong
         public bool CheckCollision(Rectangle otherObject)
         {
             return Hitbox.Intersects(otherObject);
+        }
+        public void Attack(List<Enemy> enemies)
+        {
+            // Bereken een hitbox voor de aanval
+            Rectangle attackBounds = new Rectangle(
+                (int)positie.X - 10, // De x-positie van de aanval
+                (int)positie.Y - 10, // De y-positie van de aanval
+                50,                  // Breedte van de aanval
+                50                   // Hoogte van de aanval
+            );
+
+            // Controleer of een vijand geraakt wordt
+            foreach (var enemy in enemies)
+            {
+                if (attackBounds.Intersects(enemy.Bounds))
+                {
+                    enemy.TakeDamage(10); // Reken schade toe
+                }
+            }
+
         }
     }
 }

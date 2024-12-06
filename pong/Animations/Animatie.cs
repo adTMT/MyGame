@@ -18,14 +18,23 @@ namespace pong.Animations
     {
         public AnimationFrames CurrentFrame { get; private set; }
         private Dictionary<ActionType, List<AnimationFrames>> actionFrames;
-        private List<AnimationFrames> frames;
-        private ActionType currentAction;
+        private Dictionary<ActionType, float> frameDurations;
+        private float currentFrameTimer; private List<AnimationFrames> frames;
+        public ActionType currentAction;
         private int counter;
         public Animatie()
         {
             actionFrames = new Dictionary<ActionType, List<AnimationFrames>>();
+            frameDurations = new Dictionary<ActionType, float>();
             currentAction = ActionType.Idle;
             counter = 0;
+        }
+        public bool IsLastFrame()
+        {
+            if (!actionFrames.ContainsKey(currentAction) || actionFrames[currentAction].Count == 0)
+                return false;
+
+            return counter == actionFrames[currentAction].Count - 1;
         }
         public void AddFrame(ActionType action, AnimationFrames frame)
         {
@@ -63,6 +72,10 @@ namespace pong.Animations
                 counter = 0; // Reset the frame counter when action changes
                 CurrentFrame = actionFrames[currentAction][counter];
             }
+        }
+        public void SetFrameDuration(ActionType action, float duration)
+        {
+            frameDurations[action] = duration;
         }
     }
 }
