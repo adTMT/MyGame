@@ -41,8 +41,8 @@ namespace pong
                 return new Rectangle(
                     (int)positie.X + 6,
                     (int)positie.Y + 12,
-                    animatie.CurrentFrame.SourceRectangle.Width -4,
-                    animatie.CurrentFrame.SourceRectangle.Height -10
+                    animatie.CurrentFrame.SourceRectangle.Width - 14,
+                    animatie.CurrentFrame.SourceRectangle.Height - 10
                 );
             }
         }
@@ -85,14 +85,6 @@ namespace pong
             animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(96, 64, 32, 32)));
             animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(128,64, 32, 32)));
             animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(160,64, 32, 32)));
-            //Attacked animaties
-
-            //die animaties
-            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(0, 160, 32, 32)));
-            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(32, 160, 32, 32)));
-            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(64, 160, 32, 32)));
-            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(96, 160, 32, 32)));
-            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(128, 160, 32, 32)));
         }
 
         public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
@@ -152,7 +144,11 @@ namespace pong
                 return;
             }
             spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, color);
-            //spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
+            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
+        }
+        private void DrawRectangle(SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle, Color color)
+        {
+            spriteBatch.Draw(texture, rectangle, color);
         }
         public void Move(Level1 level)
         {
@@ -166,7 +162,7 @@ namespace pong
                 Rectangle toekomstigeHitbox = new Rectangle(
                     (int)toekomstigePositie.X + 6,
                     (int)toekomstigePositie.Y + 12,
-                    animatie.CurrentFrame.SourceRectangle.Width - 4,
+                    animatie.CurrentFrame.SourceRectangle.Width - 14,
                     animatie.CurrentFrame.SourceRectangle.Height - 10
                 );
 
@@ -214,10 +210,10 @@ namespace pong
         {
             // Bereken een hitbox voor de aanval
             Rectangle attackBounds = new Rectangle(
-                (int)positie.X - 10, // De x-positie van de aanval
-                (int)positie.Y - 10, // De y-positie van de aanval
-                50,                  // Breedte van de aanval
-                50                   // Hoogte van de aanval
+                (int)positie.X + 8, // De x-positie van de aanval
+                (int)positie.Y + 16, // De y-positie van de aanval
+                20,                  // Breedte van de aanval
+                15                  // Hoogte van de aanval
             );
 
             // Controleer of een vijand geraakt wordt

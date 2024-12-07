@@ -59,10 +59,10 @@ namespace pong
         {
             // Bereken een hitbox voor de aanval
             Rectangle attackBounds = new Rectangle(
-                (int)Positie.X - 10, // De x-positie van de aanval
-                (int)Positie.Y - 10, // De y-positie van de aanval
-                50,                  // Breedte van de aanval
-                50                   // Hoogte van de aanval
+                (int)Positie.X + 10, // De x-positie van de aanval
+                (int)Positie.Y + 10, // De y-positie van de aanval
+                30,                  // Breedte van de aanval
+                30                   // Hoogte van de aanval
             );
 
             // Controleer of een vijand geraakt wordt
