@@ -10,6 +10,7 @@ using pong.Animations;
 using Microsoft.Xna.Framework.Input;
 using pong.Input;
 using pong.Levels;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace pong
 {
@@ -18,7 +19,7 @@ namespace pong
         Texture2D Herotexture;
         Texture2D Hitboxtexture;
         Animatie animatie;
-        private Vector2 positie;
+        public Vector2 positie;
         private Vector2 snelheid;
         private IInputReader inputReader;
         // Frame timer variabelen
@@ -26,6 +27,7 @@ namespace pong
         private float frameDuration; // Duur per frame, bepaalt de snelheid
         private float attackCooldownTimer = 0f;
         private float attackCooldown = 0.1f;
+        public int Health = 3;
         public Rectangle Hitbox
         {
             get
@@ -193,6 +195,19 @@ namespace pong
                     enemy.TakeDamage(10); // Reken schade toe
                 }
             }
+
+        }
+        public void TakeDamage(int damage)
+        {
+            Health -= damage;
+            Console.WriteLine("Damage given");
+            if (Health <= 0)
+            {
+                Die();
+            }
+        }
+        private void Die()
+        {
 
         }
     }

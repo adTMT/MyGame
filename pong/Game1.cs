@@ -109,19 +109,16 @@ namespace pong
 
             // TODO: Add your update logic here
             hero.Update(gameTime, level, enemies);
-            if (hero.CheckCollision(blokje)|| hero.CheckCollision(blokje2))
-            {
-                backgroundColor = Color.Black;   
-            }
-            else
-            {
-                backgroundColor = Color.CornflowerBlue;
-            }
-            base.Update(gameTime);
             foreach (var enemy in enemies)
             {
                 enemy.OnDeath += HandleEnemyDeath;
+                enemy.Follow(hero.positie);
             }
+            if (hero.CheckCollision(blokje)|| hero.CheckCollision(blokje2))
+            {
+                enemies.Add(new Enemy(new Vector2(400, 400)));
+            }
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
