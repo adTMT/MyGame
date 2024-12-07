@@ -95,10 +95,11 @@ namespace pong
             //
             enemies = new List<Enemy>
             {
-            new Enemy(new Vector2(100, 100)),
-            new Enemy(new Vector2(200, 150)),
-            new Enemy(new Vector2(300, 200))
+            new Enemy(new Vector2(200, 200)),
+            new Enemy(new Vector2(50, 200)),
+            new Enemy(new Vector2(50, 350))
             };
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -117,6 +118,10 @@ namespace pong
                 backgroundColor = Color.CornflowerBlue;
             }
             base.Update(gameTime);
+            foreach (var enemy in enemies)
+            {
+                enemy.OnDeath += HandleEnemyDeath;
+            }
         }
 
         protected override void Draw(GameTime gameTime)
@@ -134,6 +139,11 @@ namespace pong
             }
             _spriteBatch.End();
             base.Draw(gameTime);
+        }
+        private void HandleEnemyDeath(Enemy deadEnemy)
+        {
+            Console.WriteLine("Removing enemy at: " + deadEnemy.Positie);
+            enemies.Remove(deadEnemy); // Verwijder de vijand uit de lijst
         }
     }
 }

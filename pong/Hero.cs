@@ -50,6 +50,7 @@ namespace pong
             snelheid = new Vector2(2, 2);
             frameTimer = 0f;
             frameDuration = 0.7f;
+
             //idle animaties
             animatie.AddFrame(ActionType.Idle,new AnimationFrames(new Rectangle(0, 0, 32, 32)));
             animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(32, 0, 32, 32)));
@@ -116,7 +117,7 @@ namespace pong
         {
             
             spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, Color.White);
-           // spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
+            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
         }
         public void Move(Level1 level)
         {
@@ -185,7 +186,7 @@ namespace pong
             );
 
             // Controleer of een vijand geraakt wordt
-            foreach (var enemy in enemies)
+            foreach (var enemy in enemies.ToList())
             {
                 if (attackBounds.Intersects(enemy.Bounds))
                 {
