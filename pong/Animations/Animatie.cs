@@ -11,8 +11,8 @@ namespace pong.Animations
     {
         Idle,
         Walk,
-        Attack
-        // Add more actions as needed
+        Attack,
+        Die
     }
     public class Animatie
     {

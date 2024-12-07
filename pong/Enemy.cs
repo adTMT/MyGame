@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace pong
 {
-    internal class Enemy: IGameObject
+    internal class Enemy
     {
         public Vector2 Positie { get; set; }
         public int Health { get; private set; }
         public Rectangle Bounds => new Rectangle((int)Positie.X, (int)Positie.Y, 32, 32); // Hitbox
         private Color color = Color.Green;
         public event Action<Enemy> OnDeath;
-        private float followRange = 125f;
+        private float followRange = 150f;
         private float speed = 0.5f;
 
         public Enemy(Vector2 positie)
@@ -55,14 +55,31 @@ namespace pong
             OnDeath?.Invoke(this);
         }
 
+        private void Attack(Hero hero)
+        {
+            // Bereken een hitbox voor de aanval
+            Rectangle attackBounds = new Rectangle(
+                (int)Positie.X - 10, // De x-positie van de aanval
+                (int)Positie.Y - 10, // De y-positie van de aanval
+                50,                  // Breedte van de aanval
+                50                   // Hoogte van de aanval
+            );
+
+            // Controleer of een vijand geraakt wordt
+            if (attackBounds.Intersects(hero.Hitbox))
+            {
+                hero.TakeDamage(1);
+            }
+            
+        }
         public void Draw(SpriteBatch spriteBatch, Texture2D texture)
         {
             spriteBatch.Draw(texture, Positie, color);
         }
 
-        public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
+        public void Update(GameTime gameTime, Level1 level, Hero hero)
         {
-            throw new NotImplementedException();
+            Attack(hero);
         }
     }
 }

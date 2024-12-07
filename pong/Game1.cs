@@ -90,7 +90,7 @@ namespace pong
         {
             hero = new Hero(_texture, new KeyBoardReader());
             //blokje
-            blokje = new Rectangle((int)positie.X, (int)positie.Y, 50, 50);
+            blokje = new Rectangle((int)positie.X + 200, (int)positie.Y+150, 50, 100);
             blokje2 = new Rectangle((int)positie.X + 50, (int)positie.Y + 50, 50, 50);
             //
             enemies = new List<Enemy>
@@ -113,10 +113,12 @@ namespace pong
             {
                 enemy.OnDeath += HandleEnemyDeath;
                 enemy.Follow(hero.positie);
+                enemy.Update(gameTime,level,hero);
             }
-            if (hero.CheckCollision(blokje)|| hero.CheckCollision(blokje2))
+            if (hero.CheckCollision(blokje))
             {
-                enemies.Add(new Enemy(new Vector2(400, 400)));
+                enemies.Add(new Enemy(new Vector2(400, 300)));
+                enemies.Add(new Enemy(new Vector2(400, 100)));
             }
             base.Update(gameTime);
         }

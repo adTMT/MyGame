@@ -27,7 +27,12 @@ namespace pong
         private float frameDuration; // Duur per frame, bepaalt de snelheid
         private float attackCooldownTimer = 0f;
         private float attackCooldown = 0.1f;
-        public int Health = 3;
+        private int Health { get; set; }
+        public bool IsInvulnerable { get; private set; }
+        private double invulnerabilityTimer;
+        private double invulnerabilityDuration = 2.0; // 2 seconden onkwetsbaarheid
+        private Color color = Color.White; // Normale kleur
+
         public Rectangle Hitbox
         {
             get
@@ -52,6 +57,8 @@ namespace pong
             snelheid = new Vector2(2, 2);
             frameTimer = 0f;
             frameDuration = 0.7f;
+            Health = 3;
+
 
             //idle animaties
             animatie.AddFrame(ActionType.Idle,new AnimationFrames(new Rectangle(0, 0, 32, 32)));
@@ -78,6 +85,14 @@ namespace pong
             animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(96, 64, 32, 32)));
             animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(128,64, 32, 32)));
             animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(160,64, 32, 32)));
+            //Attacked animaties
+
+            //die animaties
+            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(0, 160, 32, 32)));
+            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(32, 160, 32, 32)));
+            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(64, 160, 32, 32)));
+            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(96, 160, 32, 32)));
+            animatie.AddFrame(ActionType.Die, new AnimationFrames(new Rectangle(128, 160, 32, 32)));
         }
 
         public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
@@ -114,12 +129,25 @@ namespace pong
                 animatie.Update();// Zet animatie naar "Attack"
                 attackCooldownTimer = attackCooldown;
             }
+            if (IsInvulnerable)
+            {
+                invulnerabilityTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+                // Stop onkwetsbaarheid na de timer
+                if (invulnerabilityTimer >= invulnerabilityDuration)
+                {
+                    IsInvulnerable = false;
+                    invulnerabilityTimer = 0;
+                    color = Color.White; // Reset kleur
+                }
+            }
+
         }
         public void Draw(SpriteBatch spriteBatch, Texture2D hitboxTexture)
         {
             
-            spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, Color.White);
-            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
+            spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, color);
+            //spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
         }
         public void Move(Level1 level)
         {
@@ -199,16 +227,21 @@ namespace pong
         }
         public void TakeDamage(int damage)
         {
-            Health -= damage;
-            Console.WriteLine("Damage given");
-            if (Health <= 0)
+            if (!IsInvulnerable)
             {
-                Die();
+                Health -= damage;
+                Console.WriteLine("Damage given");
+                IsInvulnerable = true;
+                color = Color.Red;
+                if (Health <= 0)
+                {
+                    Die();
+                }
             }
         }
         private void Die()
         {
-
+            Console.WriteLine("dead");
         }
     }
 }
