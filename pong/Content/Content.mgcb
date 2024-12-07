@@ -25,6 +25,13 @@
 /processorParam:TextureFormat=Color
 /build:0x72_DungeonTilesetII_v1.7.png
 
+#begin Gamefont.SpriteFont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Gamefont.SpriteFont
+
 #begin Ratfolk Mage Sprite Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
+  <Asset Type="Graphics:FontDescription">
+    <FontName>Arial</FontName> <!-- Het lettertype -->
+    <Size>24</Size> <!-- De grootte van de tekst -->
+    <Spacing>2</Spacing>
+    <Style>Regular</Style> <!-- Opties: Regular, Bold, Italic, BoldItalic -->
+    <CharacterRegions>
+      <CharacterRegion>
+        <Start> </Start>
+        <End>~</End>
+      </CharacterRegion>
+    </CharacterRegions>
+  </Asset>
+</XnaContent>

@@ -27,7 +27,7 @@ namespace pong
         private float frameDuration; // Duur per frame, bepaalt de snelheid
         private float attackCooldownTimer = 0f;
         private float attackCooldown = 0.1f;
-        private int Health { get; set; }
+        public int Health { get; set; }
         public bool IsInvulnerable { get; private set; }
         private double invulnerabilityTimer;
         private double invulnerabilityDuration = 2.0; // 2 seconden onkwetsbaarheid
@@ -56,7 +56,7 @@ namespace pong
             positie = new Vector2(1, 1);
             snelheid = new Vector2(2, 2);
             frameTimer = 0f;
-            frameDuration = 0.7f;
+            frameDuration = 0.3f;
             Health = 3;
 
 
@@ -141,11 +141,16 @@ namespace pong
                     color = Color.White; // Reset kleur
                 }
             }
+            
 
         }
         public void Draw(SpriteBatch spriteBatch, Texture2D hitboxTexture)
         {
-            
+            if (IsInvulnerable && (invulnerabilityTimer * 10 % 2) < 1)
+            {
+                // Sla renderen van hero over om hem te laten "knipperen"
+                return;
+            }
             spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, color);
             //spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
         }
@@ -241,7 +246,7 @@ namespace pong
         }
         private void Die()
         {
-            Console.WriteLine("dead");
+            Health = 0;
         }
     }
 }

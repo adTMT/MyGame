@@ -11,6 +11,11 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace pong
 {
+    public enum GameState
+    {
+        Playing,
+        GameOver
+    }
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -22,7 +27,8 @@ namespace pong
         Rectangle blokje;
         Rectangle blokje2;
         Vector2 positie = new Vector2(50, 50);
-        Color backgroundColor = Color.CornflowerBlue;
+        Color backgroundColor = Color.Black;
+        private GameState currentGameState = GameState.Playing;
         //hitboxtexture
         Texture2D HitboxTexture;
         //level
@@ -108,19 +114,46 @@ namespace pong
                 Exit();
 
             // TODO: Add your update logic here
-            hero.Update(gameTime, level, enemies);
-            foreach (var enemy in enemies)
+            if (currentGameState == GameState.Playing)
             {
-                enemy.OnDeath += HandleEnemyDeath;
-                enemy.Follow(hero.positie);
-                enemy.Update(gameTime,level,hero);
+                hero.Update(gameTime, level, enemies);
+                foreach (var enemy in enemies)
+                {
+                    enemy.OnDeath += HandleEnemyDeath;
+                    enemy.Follow(hero.positie);
+                    enemy.Update(gameTime, level, hero);
+                }
+                if (hero.CheckCollision(blokje))
+                {
+                    enemies.Add(new Enemy(new Vector2(400, 300)));
+                    enemies.Add(new Enemy(new Vector2(400, 100)));
+                }
+                if (hero.Health <= 0)
+                {
+                    currentGameState = GameState.GameOver;
+                }
+                
             }
-            if (hero.CheckCollision(blokje))
+            else if (currentGameState == GameState.GameOver)
             {
-                enemies.Add(new Enemy(new Vector2(400, 300)));
-                enemies.Add(new Enemy(new Vector2(400, 100)));
+                // Herstart het spel als op R wordt gedrukt
+                if (Keyboard.GetState().IsKeyDown(Keys.R))
+                {
+                    RestartGame();
+                }
             }
+
             base.Update(gameTime);
+        }
+
+        private void RestartGame()
+        {
+            currentGameState = GameState.Playing;
+            hero = new Hero(_texture, new KeyBoardReader()); // Reset hero
+            enemies.Clear();
+            enemies.Add(new Enemy(new Vector2(200, 200))); // Voeg vijanden opnieuw toe
+            enemies.Add(new Enemy(new Vector2(50, 200)));
+            enemies.Add(new Enemy(new Vector2(50, 350)));
         }
 
         protected override void Draw(GameTime gameTime)
@@ -128,17 +161,46 @@ namespace pong
             GraphicsDevice.Clear(backgroundColor);
             _spriteBatch.Begin();
             // TODO: Add your drawing code here
-            level.Draw(_spriteBatch);
-            hero.Draw(_spriteBatch, HitboxTexture);
-            // Teken vijanden
-            foreach (var enemy in enemies)
+            if (currentGameState == GameState.Playing)
             {
-                _spriteBatch.Draw(enemyTexture, new Rectangle((int)enemy.Positie.X, (int)enemy.Positie.Y, 50, 50), Color.Red);
-                _spriteBatch.Draw(HitboxTexture, enemy.Bounds, Color.Green);
+                level.Draw(_spriteBatch);
+                hero.Draw(_spriteBatch, HitboxTexture);
+                // Teken vijanden
+                foreach (var enemy in enemies)
+                {
+                    _spriteBatch.Draw(enemyTexture, new Rectangle((int)enemy.Positie.X, (int)enemy.Positie.Y, 50, 50), Color.Red);
+                    _spriteBatch.Draw(HitboxTexture, enemy.Bounds, Color.Green);
+                }
+            }
+            else if(currentGameState == GameState.GameOver)
+            {
+                DrawGameOverScreen();
             }
             _spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        private void DrawGameOverScreen()
+        {
+            string gameOverText = "Game Over";
+            string restartText = "Press R to Restart";
+
+            var font = Content.Load<SpriteFont>("Gamefont");
+
+            Vector2 gameOverPosition = new Vector2(
+                _graphics.PreferredBackBufferWidth / 2 - font.MeasureString(gameOverText).X / 2,
+                _graphics.PreferredBackBufferHeight / 2 - font.MeasureString(gameOverText).Y
+            );
+
+            Vector2 restartPosition = new Vector2(
+                _graphics.PreferredBackBufferWidth / 2 - font.MeasureString(restartText).X / 2,
+                _graphics.PreferredBackBufferHeight / 2 + font.MeasureString(restartText).Y
+            );
+
+            _spriteBatch.DrawString(font, gameOverText, gameOverPosition, Color.Red);
+            _spriteBatch.DrawString(font, restartText, restartPosition, Color.White);
+        }
+
         private void HandleEnemyDeath(Enemy deadEnemy)
         {
             Console.WriteLine("Removing enemy at: " + deadEnemy.Positie);
