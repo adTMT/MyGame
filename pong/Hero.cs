@@ -144,7 +144,7 @@ namespace pong
                 return;
             }
             spriteBatch.Draw(Herotexture, positie, animatie.CurrentFrame.SourceRectangle, color);
-            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
+            //spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f); // Transparante rode hitbox
         }
         private void DrawRectangle(SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle, Color color)
         {
