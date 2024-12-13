@@ -37,7 +37,7 @@ namespace pong
         Texture2D tilesetTexture; // Texture voor de tileset
         List<Enemy> enemies;
         private Texture2D enemyTexture;
-
+        bool firsttime = true;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -70,8 +70,8 @@ namespace pong
                                                          { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
                                                          { 1, new Rectangle(16, 16, 16, 16) }}; //muur
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
-            enemyTexture = new Texture2D(GraphicsDevice, 1, 1);
-            enemyTexture.SetData(new[] { Color.Red });
+            enemyTexture = Content.Load<Texture2D>("Ghost-Sheet");
+            //enemyTexture.SetData(new[] { Color.Red });
             level = new Level1(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
             int[,] levelLayout = new int[,]{
                                            { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -102,9 +102,9 @@ namespace pong
             //
             enemies = new List<Enemy>
             {
-            new Enemy(new Vector2(200, 200)),
-            new Enemy(new Vector2(50, 200)),
-            new Enemy(new Vector2(50, 350))
+            new Enemy(enemyTexture,new Vector2(200, 200),Color.White),
+            new Enemy(enemyTexture,new Vector2(50, 200),Color.White),
+            new Enemy(enemyTexture,new Vector2(50, 350),Color.White)
             };
 
         }
@@ -124,10 +124,11 @@ namespace pong
                     enemy.Follow(hero.positie);
                     enemy.Update(gameTime, level, hero);
                 }
-                if (hero.CheckCollision(blokje))
+                if (hero.CheckCollision(blokje) && firsttime)
                 {
-                    enemies.Add(new Enemy(new Vector2(400, 300)));
-                    enemies.Add(new Enemy(new Vector2(400, 100)));
+                    firsttime = false;
+                    enemies.Add(new Enemy(enemyTexture,new Vector2(400, 300),Color.Green,1f,1f));
+                    enemies.Add(new Enemy(enemyTexture,new Vector2(400, 100),Color.Green,1f,1f));
                 }
                 if (hero.Health <= 0)
                 {
@@ -152,10 +153,11 @@ namespace pong
             currentGameState = GameState.Playing;
             hero = new Hero(_texture, new KeyBoardReader()); // Reset hero
             enemies.Clear();
-            enemies.Add(new Enemy(new Vector2(200, 200))); // Voeg vijanden opnieuw toe
-            enemies.Add(new Enemy(new Vector2(50, 200)));
-            enemies.Add(new Enemy(new Vector2(50, 350)));
+            enemies.Add(new Enemy(enemyTexture, new Vector2(200, 200), Color.White)); // Voeg vijanden opnieuw toe
+            enemies.Add(new Enemy(enemyTexture, new Vector2(50, 200), Color.White));
+            enemies.Add(new Enemy(enemyTexture, new Vector2(50, 350), Color.White));
         }
+        
 
         protected override void Draw(GameTime gameTime)
         {
@@ -169,8 +171,9 @@ namespace pong
                 // Teken vijanden
                 foreach (var enemy in enemies)
                 {
-                    _spriteBatch.Draw(enemyTexture, new Rectangle((int)enemy.Positie.X, (int)enemy.Positie.Y, 50, 50), Color.Red);
-                    _spriteBatch.Draw(HitboxTexture, enemy.Bounds, Color.Green);
+                    enemy.Draw(_spriteBatch,enemyTexture);
+                    //_spriteBatch.Draw(enemyTexture, new Rectangle((int)enemy.Positie.X, (int)enemy.Positie.Y, 32, 32), Color.White);
+                    //_spriteBatch.Draw(HitboxTexture, enemy.Bounds, Color.Green);
                 }
             }
             else if(currentGameState == GameState.GameOver)

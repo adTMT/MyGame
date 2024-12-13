@@ -57,7 +57,7 @@ namespace pong
             snelheid = new Vector2(2, 2);
             frameTimer = 0f;
             frameDuration = 0.3f;
-            Health = 3;
+            Health = 5;
 
 
             //idle animaties
