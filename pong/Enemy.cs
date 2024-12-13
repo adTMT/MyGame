@@ -29,11 +29,11 @@ namespace pong
         private float scale;
 
 
-        public Enemy(Texture2D spritesheet, Vector2 positie, Color color, float schaal = 2f, float speed = 0.5f)
+        public Enemy(Texture2D spritesheet, Vector2 positie, Color color, float schaal = 2f, float speed = 0.5f, int health = 100)
         {
             Positie = positie;
             this.color = color;
-            Health = 100;
+            Health = health;
             animatie = new Animatie();
             frameTimer = 0f;
             scale = schaal;

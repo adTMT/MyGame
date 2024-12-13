@@ -38,6 +38,7 @@ namespace pong
         List<Enemy> enemies;
         private Texture2D enemyTexture;
         bool firsttime = true;
+        bool firsttime2 = true;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -98,7 +99,7 @@ namespace pong
             hero = new Hero(_texture, new KeyBoardReader());
             //blokje
             blokje = new Rectangle((int)positie.X + 200, (int)positie.Y+150, 50, 100);
-            blokje2 = new Rectangle((int)positie.X + 50, (int)positie.Y + 50, 50, 50);
+            blokje2 = new Rectangle((int)positie.X + 400, (int)positie.Y + 150, 50, 100);
             //
             enemies = new List<Enemy>
             {
@@ -129,6 +130,11 @@ namespace pong
                     firsttime = false;
                     enemies.Add(new Enemy(enemyTexture,new Vector2(400, 300),Color.Green,1f,1f));
                     enemies.Add(new Enemy(enemyTexture,new Vector2(400, 100),Color.Green,1f,1f));
+                }
+                if (hero.CheckCollision(blokje2) && firsttime2)
+                {
+                    firsttime2 = false;
+                    enemies.Add(new Enemy(enemyTexture, new Vector2(600, 200), Color.Red, 4f, 0.4f, 250));
                 }
                 if (hero.Health <= 0)
                 {
