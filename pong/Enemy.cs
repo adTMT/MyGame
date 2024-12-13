@@ -12,10 +12,10 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace pong
 {
-    internal class Enemy: IGameObject
+    internal class Enemy : IHealth
     {
         public Vector2 Positie { get; set; }
-        public int Health { get; private set; }
+        public int Health { get; set; }
         public Rectangle Bounds => new Rectangle((int)Positie.X, (int)Positie.Y, 32, 32); // Hitbox
         private Color color;
         public event Action<Enemy> OnDeath;
@@ -110,7 +110,16 @@ namespace pong
 
         public void Update(GameTime gameTime, Level1 level, Hero hero)
         {
+            Follow(hero.positie);
+            HandleAttack(hero);
+            HandleAnimations(gameTime);
+        }
+        private void HandleAttack(Hero hero)
+        {
             Attack(hero);
+        }
+        private void HandleAnimations(GameTime gameTime)
+        {
             frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (frameTimer >= frameDuration)
             {
@@ -118,7 +127,6 @@ namespace pong
                 frameTimer = 0f;
             }
         }
-
         public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
         {
             throw new NotImplementedException();

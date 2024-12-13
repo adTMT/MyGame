@@ -14,7 +14,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace pong
 {
-    class Hero:IGameObject
+    class Hero : IHealth, IMovable, IAttackable
     {
         Texture2D Herotexture;
         Texture2D Hitboxtexture;
@@ -89,43 +89,53 @@ namespace pong
 
         public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
         {
-            // Verlaag de cooldown timer
+            HandleCooldown(gameTime);
+            Move(level);
+            HandleAnimations(gameTime);
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && attackCooldownTimer <= 0)
+            {
+                PerformAttack(enemies);
+            }
+
+            HandleInvulnerability(gameTime);
+
+
+        }
+        private void HandleCooldown(GameTime gameTime)
+        {
             if (attackCooldownTimer > 0)
             {
                 attackCooldownTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
-
-            Move(level);
-
-            // Verhoog de frame timer met de verstreken tijd sinds de laatste update
+        }
+        private void HandleAnimations(GameTime gameTime)
+        {
+            // Verhoog de frame timer met de verstreken tijd
             frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Specifieke frameDuration voor de aanval animatie (trager)
-            float currentFrameDuration = frameDuration;
-            if (animatie.currentAction == ActionType.Attack)
-            {
-                currentFrameDuration = 0.1f; // Verhoog de frame duur voor de aanval
-            }
+            // Specifieke frameDuration voor de aanval animatie
+            float currentFrameDuration = animatie.currentAction == ActionType.Attack ? 0.1f : frameDuration;
 
-            // Als de frame timer de ingestelde frame duur overschrijdt, ga dan naar de volgende frame
             if (frameTimer >= currentFrameDuration)
             {
                 animatie.Update(); // Update de animatie
                 frameTimer = 0f; // Reset de timer
             }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) && attackCooldownTimer <= 0)
-            {
-                Attack(enemies); // Voer de aanval uit
-                animatie.SetAction(ActionType.Attack);
-                animatie.Update();// Zet animatie naar "Attack"
-                attackCooldownTimer = attackCooldown;
-            }
+        }
+        private void PerformAttack(List<Enemy> enemies)
+        {
+            Attack(enemies); // Voer de aanval uit
+            animatie.SetAction(ActionType.Attack);
+            animatie.Update(); // Zet animatie naar "Attack"
+            attackCooldownTimer = attackCooldown;
+        }
+        private void HandleInvulnerability(GameTime gameTime)
+        {
             if (IsInvulnerable)
             {
                 invulnerabilityTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
-                // Stop onkwetsbaarheid na de timer
                 if (invulnerabilityTimer >= invulnerabilityDuration)
                 {
                     IsInvulnerable = false;
@@ -133,10 +143,8 @@ namespace pong
                     color = Color.White; // Reset kleur
                 }
             }
-            
-
         }
-        public void Draw(SpriteBatch spriteBatch, Texture2D hitboxTexture)
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (IsInvulnerable && (invulnerabilityTimer * 10 % 2) < 1)
             {

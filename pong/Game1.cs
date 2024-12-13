@@ -122,7 +122,6 @@ namespace pong
                 foreach (var enemy in enemies)
                 {
                     enemy.OnDeath += HandleEnemyDeath;
-                    enemy.Follow(hero.positie);
                     enemy.Update(gameTime, level, hero);
                 }
                 if (hero.CheckCollision(blokje) && firsttime)
@@ -173,7 +172,7 @@ namespace pong
             if (currentGameState == GameState.Playing)
             {
                 level.Draw(_spriteBatch);
-                hero.Draw(_spriteBatch, HitboxTexture);
+                hero.Draw(_spriteBatch);
                 // Teken vijanden
                 foreach (var enemy in enemies)
                 {
