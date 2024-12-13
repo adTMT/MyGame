@@ -39,6 +39,7 @@ namespace pong
         private Texture2D enemyTexture;
         bool firsttime = true;
         bool firsttime2 = true;
+        private EnemyManager enemyManager;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -71,7 +72,10 @@ namespace pong
                                                          { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
                                                          { 1, new Rectangle(16, 16, 16, 16) }}; //muur
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
-            enemyTexture = Content.Load<Texture2D>("Ghost-Sheet");
+            enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet"));
+            enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
+            enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
+            enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
             //enemyTexture.SetData(new[] { Color.Red });
             level = new Level1(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
             int[,] levelLayout = new int[,]{
@@ -101,12 +105,7 @@ namespace pong
             blokje = new Rectangle((int)positie.X + 200, (int)positie.Y+150, 50, 100);
             blokje2 = new Rectangle((int)positie.X + 400, (int)positie.Y + 150, 50, 100);
             //
-            enemies = new List<Enemy>
-            {
-            new Enemy(enemyTexture,new Vector2(200, 200),Color.White),
-            new Enemy(enemyTexture,new Vector2(50, 200),Color.White),
-            new Enemy(enemyTexture,new Vector2(50, 350),Color.White)
-            };
+           
 
         }
 
@@ -118,22 +117,19 @@ namespace pong
             // TODO: Add your update logic here
             if (currentGameState == GameState.Playing)
             {
-                hero.Update(gameTime, level, enemies);
-                foreach (var enemy in enemies)
-                {
-                    enemy.OnDeath += HandleEnemyDeath;
-                    enemy.Update(gameTime, level, hero);
-                }
+                hero.Update(gameTime, level, enemyManager.enemies);
+                enemyManager.UpdateEnemies(gameTime, level, hero);
+                
                 if (hero.CheckCollision(blokje) && firsttime)
                 {
                     firsttime = false;
-                    enemies.Add(new Enemy(enemyTexture,new Vector2(400, 300),Color.Green,1f,1f));
-                    enemies.Add(new Enemy(enemyTexture,new Vector2(400, 100),Color.Green,1f,1f));
+                    enemyManager.AddEnemy(new Vector2(400, 300), Color.Green, 1f, 1f);
+                    enemyManager.AddEnemy(new Vector2(400, 100), Color.Green, 1f, 1f);
                 }
                 if (hero.CheckCollision(blokje2) && firsttime2)
                 {
                     firsttime2 = false;
-                    enemies.Add(new Enemy(enemyTexture, new Vector2(600, 200), Color.Red, 4f, 0.4f, 250));
+                    enemyManager.AddEnemy(new Vector2(600, 200), Color.Red, 4f, 0.4f, 250);
                 }
                 if (hero.Health <= 0)
                 {
@@ -157,10 +153,10 @@ namespace pong
         {
             currentGameState = GameState.Playing;
             hero = new Hero(_texture, new KeyBoardReader()); // Reset hero
-            enemies.Clear();
-            enemies.Add(new Enemy(enemyTexture, new Vector2(200, 200), Color.White)); // Voeg vijanden opnieuw toe
-            enemies.Add(new Enemy(enemyTexture, new Vector2(50, 200), Color.White));
-            enemies.Add(new Enemy(enemyTexture, new Vector2(50, 350), Color.White));
+            enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet")); // Reset enemy manager
+            enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
+            enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
+            enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
         }
         
 
@@ -174,12 +170,8 @@ namespace pong
                 level.Draw(_spriteBatch);
                 hero.Draw(_spriteBatch);
                 // Teken vijanden
-                foreach (var enemy in enemies)
-                {
-                    enemy.Draw(_spriteBatch,enemyTexture);
-                    //_spriteBatch.Draw(enemyTexture, new Rectangle((int)enemy.Positie.X, (int)enemy.Positie.Y, 32, 32), Color.White);
-                    //_spriteBatch.Draw(HitboxTexture, enemy.Bounds, Color.Green);
-                }
+                enemyManager.DrawEnemies(_spriteBatch);
+
             }
             else if(currentGameState == GameState.GameOver)
             {

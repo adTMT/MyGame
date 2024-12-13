@@ -12,7 +12,7 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace pong
 {
-    internal class Enemy : IHealth
+    internal class Enemy : IHealth, IEnemy
     {
         public Vector2 Positie { get; set; }
         public int Health { get; set; }

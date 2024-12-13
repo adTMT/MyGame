@@ -10,18 +10,17 @@ namespace pong
 {
     internal class EnemyFactory
     {
-        private Texture2D _texture;
-        private float _speed;
-        private int _health;
+        public Texture2D enemyTexture;
+
 
         public EnemyFactory(Texture2D texture)
         {
-            _texture = texture;
+            enemyTexture = texture;
         }
 
-        public Enemy CreateEnemy(Vector2 position, Color color, float speed = 0.5f, int health = 100)
+        public Enemy CreateEnemy(Vector2 position, Color color, float scale = 2f, float speed = 0.5f, int health = 100)
         {
-            return new Enemy(_texture, position, color, 2f, speed, health);
+            return new Enemy(enemyTexture, position, color, scale, speed, health);
         }
     }
 }
