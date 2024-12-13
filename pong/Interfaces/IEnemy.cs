@@ -11,7 +11,7 @@ namespace pong.Interfaces
 {
     internal interface IEnemy
     {
-        void Update(GameTime gameTime, Level1 level, Hero hero);
+        void Update(GameTime gameTime, Level level, Hero hero);
         void Draw(SpriteBatch spriteBatch, Texture2D texture);
     }
 }

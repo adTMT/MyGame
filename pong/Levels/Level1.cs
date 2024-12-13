@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,70 +11,35 @@ namespace pong.Levels
 {
     internal class Level1
     {
-        private int[,] layout;                       // 2D-array voor de level-layout
-        private List<Tile> tiles;             // Lijst met alle tiles
-        private Texture2D tilesetTexture;     // De tileset-afbeelding
-        private int tileSize;                 // Grootte van één tile (bijvoorbeeld 32x32)
-        private Dictionary<int, Rectangle> tileMapping;  // Mapping van tile-ID naar tileset-coördinaten
-
-
-        public Level1(Texture2D tilesetTexture, int tileSize, Dictionary<int, Rectangle> tileMapping)
+        Level level;
+        public void Level1Setup(Texture2D tilesetTexture)
         {
-            this.tilesetTexture = tilesetTexture;
-            this.tileSize = tileSize;
-            tiles = new List<Tile>();
-            this.tileMapping = tileMapping;
+            Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
+                                                         { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
+                                                         { 1, new Rectangle(16, 16, 16, 16) }}; //muur
+            level = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
+            int[,] levelLayout = new int[,]{
+                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 1, 1,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
+            level.LoadLevel(levelLayout);
         }
 
-        // Methode om de levelgegevens te laden
-        public void LoadLevel(int[,] layout)
+        internal void Draw(SpriteBatch spriteBatch)
         {
-            this.layout = layout;
-        }
-
-        // Tekenen van het level
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            for (int y = 0; y < layout.GetLength(0); y++)
-            {
-                for (int x = 0; x < layout.GetLength(1); x++)
-                {
-                    int tileId = layout[y, x];
-                    if (tileMapping.ContainsKey(tileId))
-                    {
-                        Rectangle sourceRectangle = tileMapping[tileId];
-                        Rectangle destinationRectangle = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-
-                        spriteBatch.Draw(tilesetTexture, destinationRectangle, sourceRectangle, Color.White);
-                    }
-                }
-            }
-        }
-        public bool IsCollidingWithWall(Rectangle heroBounds)
-        {
-            for (int y = 0; y < layout.GetLength(0); y++)
-            {
-                for (int x = 0; x < layout.GetLength(1); x++)
-                {
-                    int tileId = layout[y, x];
-                    if (tileId == 1) // 1 staat voor muur in je tileMapping
-                    {
-                        Rectangle tileBounds = new Rectangle(
-                            x * tileSize, // Berekent de tegelpositie op het scherm
-                            y * tileSize,
-                            tileSize,
-                            tileSize
-                        );
-
-                        if (tileBounds.Intersects(heroBounds))
-                        {
-                            return true; // Er is een botsing
-                        }
-                    }
-                }
-            }
-
-            return false; // Geen botsing
+            level.Draw(spriteBatch);
         }
     }
 }

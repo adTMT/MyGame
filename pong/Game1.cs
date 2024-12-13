@@ -33,13 +33,14 @@ namespace pong
         //hitboxtexture
         Texture2D HitboxTexture;
         //level
-        Level1 level; // Level-klasse als variabele
+        Level level; // Level-klasse als variabele
         Texture2D tilesetTexture; // Texture voor de tileset
         List<Enemy> enemies;
         private Texture2D enemyTexture;
         bool firsttime = true;
         bool firsttime2 = true;
         private EnemyManager enemyManager;
+        Level1 level1 = new Level1();
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -67,17 +68,18 @@ namespace pong
             //hitbox
             HitboxTexture = new Texture2D(GraphicsDevice, 1, 1);
             HitboxTexture.SetData(new[] { Color.White });
-            //level
-            Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
-                                                         { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
-                                                         { 1, new Rectangle(16, 16, 16, 16) }}; //muur
-            tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
+            //enemies
             enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet"));
             enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
             enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
             enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
             //enemyTexture.SetData(new[] { Color.Red });
-            level = new Level1(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
+            //level
+            tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
+            Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
+                                                         { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
+                                                         { 1, new Rectangle(16, 16, 16, 16) }}; //muur
+            level = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
             int[,] levelLayout = new int[,]{
                                            { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -152,6 +154,8 @@ namespace pong
         private void RestartGame()
         {
             currentGameState = GameState.Playing;
+            firsttime = true; 
+            firsttime2 = true;
             hero = new Hero(_texture, new KeyBoardReader()); // Reset hero
             enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet")); // Reset enemy manager
             enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
@@ -202,10 +206,6 @@ namespace pong
             _spriteBatch.DrawString(font, restartText, restartPosition, Color.White);
         }
 
-        private void HandleEnemyDeath(Enemy deadEnemy)
-        {
-            Console.WriteLine("Removing enemy at: " + deadEnemy.Positie);
-            enemies.Remove(deadEnemy); // Verwijder de vijand uit de lijst
-        }
+        
     }
 }

@@ -87,7 +87,7 @@ namespace pong
             animatie.AddFrame(ActionType.Attack, new AnimationFrames(new Rectangle(160,64, 32, 32)));
         }
 
-        public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
+        public void Update(GameTime gameTime, Level level, List<Enemy> enemies)
         {
             HandleCooldown(gameTime);
             Move(level);
@@ -158,7 +158,7 @@ namespace pong
         {
             spriteBatch.Draw(texture, rectangle, color);
         }
-        public void Move(Level1 level)
+        public void Move(Level level)
         {
             var direction = inputReader.ReadInput();
 

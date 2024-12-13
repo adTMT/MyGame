@@ -108,7 +108,7 @@ namespace pong
                         );
         }
 
-        public void Update(GameTime gameTime, Level1 level, Hero hero)
+        public void Update(GameTime gameTime, Level level, Hero hero)
         {
             Follow(hero.positie);
             HandleAttack(hero);
@@ -127,7 +127,7 @@ namespace pong
                 frameTimer = 0f;
             }
         }
-        public void Update(GameTime gameTime, Level1 level, List<Enemy> enemies)
+        public void Update(GameTime gameTime, Level level, List<Enemy> enemies)
         {
             throw new NotImplementedException();
         }

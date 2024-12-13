@@ -29,7 +29,7 @@ namespace pong
             enemies.Add(enemy);
         }
 
-        public void UpdateEnemies(GameTime gameTime, Level1 level, Hero hero)
+        public void UpdateEnemies(GameTime gameTime, Level level, Hero hero)
         {
             foreach (var enemy in enemies)
             {
