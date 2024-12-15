@@ -200,18 +200,19 @@ namespace pong
                     positie = toekomstigePositie;
                     animatie.SetAction(ActionType.Walk);
                 }
+                else
+                {
+                    currentSpeed = Vector2.Zero;
+
+                    // Zet animatie naar "Idle" als er geen beweging is
+                    animatie.SetAction(ActionType.Idle);
+                }
             }
             else
             {
-                // Als er geen input is, vertraag de snelheid geleidelijk
-                if (currentSpeed.Length() > 0)
-                {
-                    currentSpeed *= 0.9f;  // Afname van snelheid, 0.9 is de vertraging factor
-                }
-
-                // Zet animatie naar "Idle" als er geen beweging is
                 animatie.SetAction(ActionType.Idle);
             }
+            
         }
         private Vector2 BerekenToekomstigePositie(Vector2 huidigePositie, Vector2 direction, float snelheid)
         {
