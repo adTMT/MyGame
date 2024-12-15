@@ -85,10 +85,10 @@ namespace pong
             coins = new List<Coin>
                     {
                         new Coin(new Vector2(100, 100), coinTexture),
-                        new Coin(new Vector2(200, 200), coinTexture),
-                        new Coin(new Vector2(300, 300), coinTexture),
-                        new Coin(new Vector2(400, 100), coinTexture),
-                        new Coin(new Vector2(500, 250), coinTexture)
+                        new Coin(new Vector2(750, 200), coinTexture),
+                        new Coin(new Vector2(30, 200), coinTexture),
+                        new Coin(new Vector2(50, 400), coinTexture),
+                        new Coin(new Vector2(750, 400), coinTexture)
                     };
             //level
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
@@ -153,7 +153,7 @@ namespace pong
                 {
                     currentGameState = GameState.GameOver;
                 }
-                if (enemyManager.enemies.Count == 0)
+                if (enemyManager.enemies.Count == 0 && coinsCollected == coinsNeeded)
                 {
                     currentGameState = GameState.Won;
                 }
@@ -189,6 +189,16 @@ namespace pong
             enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
             enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
             enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
+            coinsCollected = 0;
+            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
+            coins = new List<Coin>
+                    {
+                        new Coin(new Vector2(100, 100), coinTexture),
+                        new Coin(new Vector2(750, 200), coinTexture),
+                        new Coin(new Vector2(30, 200), coinTexture),
+                        new Coin(new Vector2(50, 400), coinTexture),
+                        new Coin(new Vector2(750, 400), coinTexture)
+                    };
         }
         
 
@@ -207,6 +217,7 @@ namespace pong
                 {
                     coin.Draw(_spriteBatch);
                 }
+                DrawCoinStatus();
 
             }
             else if(currentGameState == GameState.GameOver)
@@ -260,6 +271,14 @@ namespace pong
             
             _spriteBatch.DrawString(font, WonText, gameOverPosition, Color.Blue);
             _spriteBatch.DrawString(font, restartText, restartPosition, Color.White);
+        }
+        private void DrawCoinStatus()
+        {
+            var font = Content.Load<SpriteFont>("Gamefont"); // Laad een font voor de tekst
+            string coinText = $"Coins: {coinsCollected}/{coinsNeeded}";
+            Vector2 position = new Vector2(_graphics.PreferredBackBufferWidth - 150, 20); // Rechtsboven
+
+            _spriteBatch.DrawString(font, coinText, position, Color.White);
         }
 
 
