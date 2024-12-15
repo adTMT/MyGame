@@ -32,7 +32,11 @@ namespace pong
         private double invulnerabilityTimer;
         private double invulnerabilityDuration = 2.0; // 2 seconden onkwetsbaarheid
         private Color color = Color.White; // Normale kleur
-
+        private float friction = 0.9f;
+        private float maxSpeed = 2f;   // Maximale snelheid
+        private float acceleration = 0.1f;
+        private Vector2 currentSpeed;
+        private float accelerationPower = 4f;
         public Rectangle Hitbox
         {
             get
@@ -54,7 +58,7 @@ namespace pong
             this.inputReader = inputReader;
             animatie = new Animatie();
             positie = new Vector2(1, 1);
-            snelheid = new Vector2(2, 2);
+            snelheid = Vector2.Zero;
             frameTimer = 0f;
             frameDuration = 0.3f;
             Health = 5;
@@ -165,8 +169,19 @@ namespace pong
             // Controleer of er input is
             if (direction != Vector2.Zero)
             {
-                // Bereken toekomstige positie en toekomstige hitbox
-                Vector2 toekomstigePositie = positie + direction * snelheid;
+                // Versnel de beweging in de richting van de invoer
+                currentSpeed += direction * acceleration;
+
+                // Zorg ervoor dat de snelheid niet de maximale snelheid overschrijdt
+                if (currentSpeed.Length() > maxSpeed)
+                {
+                    currentSpeed = Vector2.Normalize(currentSpeed) * maxSpeed;
+                }
+
+                // Bereken de toekomstige positie op basis van de huidige snelheid
+                Vector2 toekomstigePositie = positie + currentSpeed;
+
+                // Controleer of de toekomstige positie binnen het scherm ligt en geen botsing heeft
                 Rectangle toekomstigeHitbox = new Rectangle(
                     (int)toekomstigePositie.X + 6,
                     (int)toekomstigePositie.Y + 12,
@@ -174,7 +189,6 @@ namespace pong
                     animatie.CurrentFrame.SourceRectangle.Height - 10
                 );
 
-                // Controleer of de toekomstige positie binnen het scherm ligt en geen botsing heeft
                 bool binnenScherm = toekomstigePositie.X >= 0 &&
                                     toekomstigePositie.X <= 800 - animatie.CurrentFrame.SourceRectangle.Width &&
                                     toekomstigePositie.Y >= 0 &&
@@ -182,21 +196,26 @@ namespace pong
 
                 if (binnenScherm && !level.IsCollidingWithWall(toekomstigeHitbox))
                 {
-                    // Update positie en zet animatie op "Walk"
+                    // Update de positie van de hero en zet de animatie naar "Walk"
                     positie = toekomstigePositie;
                     animatie.SetAction(ActionType.Walk);
-                }
-                else
-                {
-                    // Zet animatie op "Idle" als beweging niet mogelijk is
-                    animatie.SetAction(ActionType.Idle);
                 }
             }
             else
             {
-                // Geen input: zet animatie op "Idle"
+                // Als er geen input is, vertraag de snelheid geleidelijk
+                if (currentSpeed.Length() > 0)
+                {
+                    currentSpeed *= 0.9f;  // Afname van snelheid, 0.9 is de vertraging factor
+                }
+
+                // Zet animatie naar "Idle" als er geen beweging is
                 animatie.SetAction(ActionType.Idle);
             }
+        }
+        private Vector2 BerekenToekomstigePositie(Vector2 huidigePositie, Vector2 direction, float snelheid)
+        {
+            return huidigePositie + direction * snelheid;
         }
 
         public void MoveWithMouse()
