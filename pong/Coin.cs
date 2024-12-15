@@ -12,7 +12,7 @@ namespace pong
     {
         public Vector2 Position { get; private set; }
         public Rectangle Hitbox => new Rectangle((int)Position.X, (int)Position.Y, 16, 16);
-        private Rectangle rectangle = new Rectangle(0, 0, 16, 16);
+        private Rectangle rectangle = new Rectangle(0, 0, 14, 16);
         private Texture2D texture;
 
         public Coin(Vector2 position, Texture2D texture)

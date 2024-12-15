@@ -68,51 +68,7 @@ namespace pong
             _texture = Content.Load<Texture2D>("Ratfolk Mage Sprite Sheet");
             InitializeGameObject();
             //blokje
-            blokTexture = new Texture2D(GraphicsDevice, 1, 1);
-            blokTexture.SetData(new[] { Color.White });
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            //hitbox
-            HitboxTexture = new Texture2D(GraphicsDevice, 1, 1);
-            HitboxTexture.SetData(new[] { Color.White });
-            //enemies
-            enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet"));
-            enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
-            //enemyTexture.SetData(new[] { Color.Red });
-            //coin
-            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
-            coins = new List<Coin>
-                    {
-                        new Coin(new Vector2(100, 100), coinTexture),
-                        new Coin(new Vector2(750, 200), coinTexture),
-                        new Coin(new Vector2(30, 200), coinTexture),
-                        new Coin(new Vector2(50, 400), coinTexture),
-                        new Coin(new Vector2(750, 400), coinTexture)
-                    };
-            //level
-            tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
-            Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
-                                                         { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
-                                                         { 1, new Rectangle(16, 16, 16, 16) }}; //muur
-            level = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
-            int[,] levelLayout = new int[,]{
-                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 0, 0, 1, 1,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 0, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
-            level.LoadLevel(levelLayout);
+            
 
         }
 
@@ -123,7 +79,7 @@ namespace pong
             blokje = new Rectangle((int)positie.X + 200, (int)positie.Y+150, 50, 100);
             blokje2 = new Rectangle((int)positie.X + 400, (int)positie.Y + 150, 50, 100);
             //
-           
+            LoadLevel1();
 
         }
 
@@ -189,7 +145,7 @@ namespace pong
             enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
             enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
             enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
-            coinsCollected = 0;
+            coinsCollected = 0;//resset coins
             coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
             coins = new List<Coin>
                     {
@@ -218,6 +174,7 @@ namespace pong
                     coin.Draw(_spriteBatch);
                 }
                 DrawCoinStatus();
+                DrawHealthStatus();
 
             }
             else if(currentGameState == GameState.GameOver)
@@ -280,7 +237,67 @@ namespace pong
 
             _spriteBatch.DrawString(font, coinText, position, Color.White);
         }
+        private void DrawHealthStatus()
+        {
+            var font = Content.Load<SpriteFont>("Gamefont"); // Laad een font voor de tekst
+            string coinText = $"Health: {hero.Health}";
+            Vector2 position = new Vector2(_graphics.PreferredBackBufferWidth/2 - font.MeasureString(coinText).X, 20); // Rechtsboven
 
+            _spriteBatch.DrawString(font, coinText, position, Color.White);
+        }
+        private void LoadLevel1()
+        {
+            blokTexture = new Texture2D(GraphicsDevice, 1, 1);
+            blokTexture.SetData(new[] { Color.White });
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            //hitbox
+            HitboxTexture = new Texture2D(GraphicsDevice, 1, 1);
+            HitboxTexture.SetData(new[] { Color.White });
+            //enemies
+            enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet"));
+            enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
+            enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
+            enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
+            //enemyTexture.SetData(new[] { Color.Red });
+            //coin
+            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
+            coins = new List<Coin>
+                    {
+                        new Coin(new Vector2(100, 100), coinTexture),
+                        new Coin(new Vector2(750, 200), coinTexture),
+                        new Coin(new Vector2(30, 200), coinTexture),
+                        new Coin(new Vector2(50, 400), coinTexture),
+                        new Coin(new Vector2(750, 400), coinTexture)
+                    };
+            //level
+            tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
+            Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
+                                                         { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
+                                                         { 1, new Rectangle(16, 16, 16, 16) }}; //muur
+            level = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
+            int[,] levelLayout = new int[,]{
+                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 1, 1,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 0,0,0,0 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                                           { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
+            level.LoadLevel(levelLayout);
+        }
+        private void RestartLevel1()
+        {
+
+        }
+        
 
     }
 }
