@@ -42,6 +42,11 @@ namespace pong
         bool firsttime2 = true;
         private EnemyManager enemyManager;
         Level1 level1 = new Level1();
+        //coins
+        private List<Coin> coins;
+        private Texture2D coinTexture;
+        private int coinsCollected = 0;
+        private int coinsNeeded = 5;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -75,6 +80,16 @@ namespace pong
             enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
             enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
             //enemyTexture.SetData(new[] { Color.Red });
+            //coin
+            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
+            coins = new List<Coin>
+                    {
+                        new Coin(new Vector2(100, 100), coinTexture),
+                        new Coin(new Vector2(200, 200), coinTexture),
+                        new Coin(new Vector2(300, 300), coinTexture),
+                        new Coin(new Vector2(400, 100), coinTexture),
+                        new Coin(new Vector2(500, 250), coinTexture)
+                    };
             //level
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
             Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
@@ -142,7 +157,15 @@ namespace pong
                 {
                     currentGameState = GameState.Won;
                 }
-                
+                for (int i = coins.Count - 1; i >= 0; i--)
+                {
+                    if (hero.CheckCollision(coins[i].Hitbox))
+                    {
+                        coins.RemoveAt(i); // Verwijder de munt uit de lijst
+                        coinsCollected++;  // Verhoog de teller
+                    }
+                }
+
             }
             else if (currentGameState == GameState.GameOver)
             {
@@ -180,6 +203,10 @@ namespace pong
                 hero.Draw(_spriteBatch);
                 // Teken vijanden
                 enemyManager.DrawEnemies(_spriteBatch);
+                foreach (var coin in coins)
+                {
+                    coin.Draw(_spriteBatch);
+                }
 
             }
             else if(currentGameState == GameState.GameOver)
