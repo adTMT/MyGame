@@ -18,9 +18,9 @@ namespace pong
             enemyTexture = texture;
         }
 
-        public Enemy CreateEnemy(Vector2 position, Color color, float scale = 2f, float speed = 0.5f, int health = 100)
+        public Enemy CreateEnemy(Vector2 position, Color color, float scale = 2f, float speed = 0.5f, int health = 100, int AiType = 0)
         {
-            return new Enemy(enemyTexture, position, color, scale, speed, health);
+            return new Enemy(enemyTexture, position, color, scale, speed, health, AiType);
         }
     }
 }

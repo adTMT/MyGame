@@ -15,7 +15,8 @@ namespace pong
     {
         Start,
         Playing,
-        GameOver
+        GameOver,
+        Won
     }
     public class Game1 : Game
     {
@@ -125,17 +126,21 @@ namespace pong
                 if (hero.CheckCollision(blokje) && firsttime)
                 {
                     firsttime = false;
-                    enemyManager.AddEnemy(new Vector2(400, 300), Color.Green, 1f, 1f);
-                    enemyManager.AddEnemy(new Vector2(400, 100), Color.Green, 1f, 1f);
+                    enemyManager.AddEnemy(new Vector2(400, 300), Color.Green, 1f, 1f,100,2);
+                    enemyManager.AddEnemy(new Vector2(400, 100), Color.Green, 1f, 1f,100,2);
                 }
                 if (hero.CheckCollision(blokje2) && firsttime2)
                 {
                     firsttime2 = false;
-                    enemyManager.AddEnemy(new Vector2(600, 200), Color.Red, 4f, 0.4f, 250);
+                    enemyManager.AddEnemy(new Vector2(600, 200), Color.Red, 4f, 0.4f, 250, 1);
                 }
                 if (hero.Health <= 0)
                 {
                     currentGameState = GameState.GameOver;
+                }
+                if (enemyManager.enemies.Count == 0)
+                {
+                    currentGameState = GameState.Won;
                 }
                 
             }
@@ -181,6 +186,10 @@ namespace pong
             {
                 DrawGameOverScreen();
             }
+            else if (currentGameState == GameState.Won)
+            {
+                DrawWonScreen();
+            }
             _spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -205,7 +214,27 @@ namespace pong
             _spriteBatch.DrawString(font, gameOverText, gameOverPosition, Color.Red);
             _spriteBatch.DrawString(font, restartText, restartPosition, Color.White);
         }
+        private void DrawWonScreen()
+        {
+            string WonText = "You WIN";
+            string restartText = "Congratulations";
 
-        
+            var font = Content.Load<SpriteFont>("Gamefont");
+
+            Vector2 gameOverPosition = new Vector2(
+                _graphics.PreferredBackBufferWidth / 2 - font.MeasureString(WonText).X / 2,
+                _graphics.PreferredBackBufferHeight / 2 - font.MeasureString(WonText).Y
+            );
+
+            Vector2 restartPosition = new Vector2(
+                _graphics.PreferredBackBufferWidth / 2 - font.MeasureString(restartText).X / 2,
+                _graphics.PreferredBackBufferHeight / 2 + font.MeasureString(restartText).Y
+            );
+            
+            _spriteBatch.DrawString(font, WonText, gameOverPosition, Color.Blue);
+            _spriteBatch.DrawString(font, restartText, restartPosition, Color.White);
+        }
+
+
     }
 }

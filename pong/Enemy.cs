@@ -22,14 +22,16 @@ namespace pong
         //volg hero variabelen
         private float followRange = 150f;
         private float speed;
+        private Vector2 snelheid = new Vector2(0,1);
+        private Vector2 snelheidx = new Vector2(1, 0);
         // Animatie variabelen
         private Animatie animatie;
         private float frameTimer;
         private float frameDuration = 0.2f;
         private float scale;
+        private int AiType;
 
-
-        public Enemy(Texture2D spritesheet, Vector2 positie, Color color, float schaal = 2f, float speed = 0.5f, int health = 100)
+        public Enemy(Texture2D spritesheet, Vector2 positie, Color color, float schaal = 2f, float speed = 0.5f, int health = 100, int AiType = 0)
         {
             Positie = positie;
             this.color = color;
@@ -38,6 +40,7 @@ namespace pong
             frameTimer = 0f;
             scale = schaal;
             this.speed = speed;
+            this.AiType = AiType;
             //idle animaties
             animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(0, 0, 32, 32)));
             animatie.AddFrame(ActionType.Idle, new AnimationFrames(new Rectangle(32, 0, 32, 32)));
@@ -59,16 +62,21 @@ namespace pong
         }
         public void Follow(Vector2 heroPosition)
         {
-            float distance = Vector2.Distance(Positie, heroPosition);
-
-            if (distance <= followRange)
+            if (IsFollowing(heroPosition))
             {
                 // Bereken richting naar de held
                 Vector2 direction = Vector2.Normalize(heroPosition - Positie);
                 Positie += direction * speed; // Beweeg richting de held
             }
         }
-
+        private bool IsFollowing(Vector2 heroPosition)
+        {
+            float distance = Vector2.Distance(Positie, heroPosition);
+            if (distance <= followRange)
+                return true;
+            else
+                return false;
+        }
         private void Die()
         {
             // Logica voor als de vijand sterft
@@ -110,9 +118,45 @@ namespace pong
 
         public void Update(GameTime gameTime, Level level, Hero hero)
         {
-            Follow(hero.positie);
             HandleAttack(hero);
             HandleAnimations(gameTime);
+            HandleMovement(hero.positie);
+        }
+        private void HandleMovement(Vector2 heroPosition)
+        {
+            if (AiType == 1)
+            {
+                if (IsFollowing(heroPosition))
+                {
+                    Follow(heroPosition);
+                }
+                else
+                {
+                    Positie += snelheid;
+                    if (Positie.Y > 480 - 120 || Positie.Y < 0)
+                    {
+                        snelheid.Y *= -1;
+                    }
+                }
+            }
+            else if (AiType == 2)
+            {
+                if (IsFollowing(heroPosition))
+                {
+                    Follow(heroPosition);
+                }
+                else
+                {
+                    Positie += snelheidx;
+                    if (Positie.X > 800 -64|| Positie.X < 0)
+                    {
+                        snelheidx.X *= -1;
+                    }
+
+                }
+            }
+            else
+                Follow(heroPosition);
         }
         private void HandleAttack(Hero hero)
         {

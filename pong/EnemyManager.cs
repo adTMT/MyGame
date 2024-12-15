@@ -22,9 +22,9 @@ namespace pong
             deathHandler = new EnemyDeathHandler(enemies);
         }
 
-        public void AddEnemy(Vector2 position, Color color, float scale = 2f, float speed = 0.5f, int health = 100)
+        public void AddEnemy(Vector2 position, Color color, float scale = 2f, float speed = 0.5f, int health = 100, int AiType = 0)
         {
-            var enemy = enemyFactory.CreateEnemy(position, color, scale, speed, health);
+            var enemy = enemyFactory.CreateEnemy(position, color, scale, speed, health, AiType);
             enemy.OnDeath += deathHandler.HandleDeath; // Gebruik de handler voor doden
             enemies.Add(enemy);
         }
