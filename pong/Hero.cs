@@ -34,7 +34,7 @@ namespace pong
         private Color color = Color.White; // Normale kleur
         private float friction = 0.9f;
         private float maxSpeed = 2f;   // Maximale snelheid
-        private float acceleration = 0.1f;
+        private float acceleration = 0.2f;
         private Vector2 currentSpeed;
         private float accelerationPower = 4f;
         public Rectangle Hitbox
