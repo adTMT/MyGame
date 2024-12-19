@@ -277,9 +277,13 @@ namespace pong
         private void DrawStart()
         {
             var font = Content.Load<SpriteFont>("Gamefont");
+            string startText = "Press Enter To start";
             string titleText = "Choose Your Level";
             string level1Text = "Level 1";
             string level2Text = "Level 2";
+            Vector2 startpositie = new Vector2(_graphics.PreferredBackBufferWidth / 2 - font.MeasureString(startText).X / 2, 400);
+            _spriteBatch.DrawString(font, startText, startpositie, Color.Red);
+            //
             Vector2 titlePosition = new Vector2(_graphics.PreferredBackBufferWidth / 2 - font.MeasureString(titleText).X / 2,100);
             _spriteBatch.DrawString(font, titleText, titlePosition, Color.White);
             //
