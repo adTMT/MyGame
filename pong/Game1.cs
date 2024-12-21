@@ -180,7 +180,14 @@ namespace pong
 
         private void RestartGame()
         {
-            levelManager.ResetCurrentLevel();
+            if (currentLevel == LevelSelect.Level1)
+            {
+                RestartLevel1();
+            }
+            else if (currentLevel == LevelSelect.Level2)
+            {
+                RestartLevel2();
+            }
         }
         
 
