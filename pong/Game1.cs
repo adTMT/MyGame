@@ -39,15 +39,13 @@ namespace pong
         private GameState currentGameState = GameState.Start;
         //hitboxtexture
         Texture2D HitboxTexture;
-        //level
-        Level level; // Level-klasse als variabele
+
         Texture2D tilesetTexture; // Texture voor de tileset
         List<Enemy> enemies;
         private Texture2D enemyTexture;
         bool firsttime = true;
         bool firsttime2 = true;
         private EnemyManager enemyManager;
-        Level1 level1 = new Level1();
         //coins
         private List<Coin> coins;
         private Texture2D coinTexture;
@@ -55,7 +53,7 @@ namespace pong
         private int coinsNeeded = 5;
         private LevelSelect currentLevel = LevelSelect.Level1;
         private Song backgroundMusic;
-
+        LevelManager levelManager;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -99,11 +97,16 @@ namespace pong
             //{
             //    LoadLevel2();
             //}
+            levelManager = new LevelManager();
 
+            levelManager.AddLevel(LevelSelect.Level1, CreateLevel1());
+            levelManager.AddLevel(LevelSelect.Level2, CreateLevel2());
+            levelManager.SetCurrentLevel(LevelSelect.Level1);
         }
 
         protected override void Update(GameTime gameTime)
         {
+            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             if (currentGameState == GameState.Start)
@@ -112,26 +115,27 @@ namespace pong
 
                 // Navigeren tussen levels
                 if (state.IsKeyDown(Keys.Left))
+                {
                     currentLevel = LevelSelect.Level1;
+                    levelManager.SetCurrentLevel(currentLevel);
+                }
                 else if (state.IsKeyDown(Keys.Right))
-                    currentLevel = LevelSelect.Level2;
+                {   currentLevel = LevelSelect.Level2;
+                    levelManager.SetCurrentLevel(currentLevel);
+                }
 
                 // Bevestig de keuze met Enter
                 if (state.IsKeyDown(Keys.Enter))
                 {
                     currentGameState = GameState.Playing;
-
-                    if (currentLevel == LevelSelect.Level1)
-                        LoadLevel1();
-                    else if (currentLevel == LevelSelect.Level2)
-                        LoadLevel2();
+                    Level currentLevel = levelManager.GetCurrentLevel();
                 }
             }
             // TODO: Add your update logic here
             if (currentGameState == GameState.Playing)
             {
-                hero.Update(gameTime, level, enemyManager.enemies);
-                enemyManager.UpdateEnemies(gameTime, level, hero);
+                hero.Update(gameTime, levelManager.GetCurrentLevel(), enemyManager.enemies);
+                enemyManager.UpdateEnemies(gameTime, levelManager.GetCurrentLevel(), hero);
                 
                 if (hero.CheckCollision(blokje) && firsttime)
                 {
@@ -176,10 +180,7 @@ namespace pong
 
         private void RestartGame()
         {
-            if (currentLevel == LevelSelect.Level1)
-                RestartLevel1();
-            else if (currentLevel == LevelSelect.Level2)
-                RestartLevel2();
+            levelManager.ResetCurrentLevel();
         }
         
 
@@ -190,7 +191,7 @@ namespace pong
             // TODO: Add your drawing code here
             if (currentGameState == GameState.Playing)
             {
-                level.Draw(_spriteBatch);
+                levelManager.GetCurrentLevel().Draw(_spriteBatch);
                 hero.Draw(_spriteBatch);
                 // Teken vijanden
                 enemyManager.DrawEnemies(_spriteBatch);
@@ -294,7 +295,7 @@ namespace pong
             _spriteBatch.DrawString(font, level2Text, level2Position, currentLevel == LevelSelect.Level2 ? Color.Yellow : Color.White);
 
         }
-        private void LoadLevel1()
+        private Level CreateLevel1()
         {
             blokTexture = new Texture2D(GraphicsDevice, 1, 1);
             blokTexture.SetData(new[] { Color.White });
@@ -323,7 +324,7 @@ namespace pong
             Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
                                                          { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
                                                          { 1, new Rectangle(16, 16, 16, 16) }}; //muur
-            level = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
+            Level level1 = new Level(tilesetTexture, 32, tileMapping);
             int[,] levelLayout = new int[,]{
                                            { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -340,9 +341,10 @@ namespace pong
                                            { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
-            level.LoadLevel(levelLayout);
+            level1.LoadLevel(levelLayout);
+            return level1;
         }
-        private void LoadLevel2()
+        private Level CreateLevel2()
         {
             blokTexture = new Texture2D(GraphicsDevice, 1, 1);
             blokTexture.SetData(new[] { Color.White });
@@ -371,7 +373,7 @@ namespace pong
             Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
                                                          { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
                                                          { 1, new Rectangle(16, 16, 16, 16) }}; //muur
-            level = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
+            Level level2 = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
             int[,] levelLayout = new int[,]{
                                            { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1},
                                            { 0, 0, 0, 0,0,0, 1,0,0,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -388,7 +390,8 @@ namespace pong
                                            { 1, 0, 1, 0,0,0, 1,0,0,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 0, 1, 0,0,0, 1,0,0,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
-            level.LoadLevel(levelLayout);
+            level2.LoadLevel(levelLayout);
+            return level2;
         }
         private void RestartLevel1()
         {

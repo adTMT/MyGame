@@ -15,6 +15,7 @@ namespace pong.Levels
         private Texture2D tilesetTexture;     // De tileset-afbeelding
         private int tileSize;                 // Grootte van één tile (bijvoorbeeld 32x32)
         private Dictionary<int, Rectangle> tileMapping;  // Mapping van tile-ID naar tileset-coördinaten
+        private int[,] originalLayout; //originele layout
 
 
         public Level(Texture2D tilesetTexture, int tileSize, Dictionary<int, Rectangle> tileMapping)
@@ -29,6 +30,12 @@ namespace pong.Levels
         public void LoadLevel(int[,] layout)
         {
             this.layout = layout;
+            originalLayout = layout;
+        }
+        public void Reset()
+        {
+            // Herstel de layout naar de originele staat
+            layout = originalLayout;
         }
 
         // Tekenen van het level
