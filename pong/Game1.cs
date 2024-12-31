@@ -92,8 +92,8 @@ namespace pong
             //
             levelManager = new LevelManager();
 
-            levelManager.AddLevel(LevelSelect.Level1, CreateLevel1());
-            levelManager.AddLevel(LevelSelect.Level2, CreateLevel2());
+            levelManager.AddLevel(LevelSelect.Level1, createLevel(1));
+            levelManager.AddLevel(LevelSelect.Level2, createLevel(2));
             levelManager.SetCurrentLevel(LevelSelect.Level1);
         }
 
@@ -292,7 +292,7 @@ namespace pong
             _spriteBatch.DrawString(font, level2Text, level2Position, currentLevel == LevelSelect.Level2 ? Color.Yellow : Color.White);
 
         }
-        private Level CreateLevel1()
+        private Level createLevel(int a)
         {
             blokTexture = new Texture2D(GraphicsDevice, 1, 1);
             blokTexture.SetData(new[] { Color.White });
@@ -308,13 +308,34 @@ namespace pong
             //enemyTexture.SetData(new[] { Color.Red });
             //coin
             coinManager = new CoinManager(Content.Load<Texture2D>("Coin-Sheetpng"));
-            coinManager.setCoins(LevelSelect.Level1);
+            coinManager.setCoins(currentLevel);
             //level
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
             Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
                                                          { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
                                                          { 1, new Rectangle(16, 16, 16, 16) }}; //muur
             Level level1 = new Level(tilesetTexture, 32, tileMapping);
+            int[,] levellayout;
+            if (a == 1)
+            {
+                levellayout = CreateLevel1();
+                level1.LoadLevel(levellayout);
+                return level1;
+            }
+            else if(a == 2)
+            {
+                levellayout = CreateLevel2();
+                level1.LoadLevel(levellayout);
+                return level1;
+            }
+            else
+            {
+                throw new Exception();
+            }
+            
+        }
+        private int[,] CreateLevel1()
+        {
             int[,] levelLayout = new int[,]{
                                            { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 0, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -331,32 +352,11 @@ namespace pong
                                            { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 0, 0, 0,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 1, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
-            level1.LoadLevel(levelLayout);
-            return level1;
+            return levelLayout;
+            
         }
-        private Level CreateLevel2()
+        private int[,] CreateLevel2()
         {
-            blokTexture = new Texture2D(GraphicsDevice, 1, 1);
-            blokTexture.SetData(new[] { Color.White });
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            //hitbox
-            HitboxTexture = new Texture2D(GraphicsDevice, 1, 1);
-            HitboxTexture.SetData(new[] { Color.White });
-            //enemies
-            enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet"));
-            enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
-            //enemyTexture.SetData(new[] { Color.Red });
-            //coin
-            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
-            coinManager.setCoins(LevelSelect.Level2);
-            //level
-            tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
-            Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
-                                                         { 0, new Rectangle(16, 64, 16, 16) },  // Vloer
-                                                         { 1, new Rectangle(16, 16, 16, 16) }}; //muur
-            Level level2 = new Level(tilesetTexture, 32, tileMapping); // Stel de grootte van de tiles in (bijvoorbeeld 32x32)
             int[,] levelLayout = new int[,]{
                                            { 0, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1},
                                            { 0, 0, 0, 0,0,0, 1,0,0,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -373,8 +373,7 @@ namespace pong
                                            { 1, 0, 1, 0,0,0, 1,0,0,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 0, 1, 0,0,0, 1,0,0,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                                            { 1, 0, 1, 1,0,0, 1,1,1,1 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
-            level2.LoadLevel(levelLayout);
-            return level2;
+            return levelLayout;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace pong
                         new Coin(new Vector2(750, 400), coinTexture)
                     };
             }
-            else
+            else if(lvl == LevelSelect.Level2)
             {
                 coins = new List<Coin>
                     {
