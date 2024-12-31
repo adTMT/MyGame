@@ -42,6 +42,10 @@ namespace pong.Levels
             {
                 levels[currentLevel].Reset();
             }
+            else
+            {
+                Console.WriteLine("No level is set to reset.");
+            }
         }
     }
 }

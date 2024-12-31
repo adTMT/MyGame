@@ -44,5 +44,12 @@ namespace pong
                 enemy.Draw(spriteBatch, enemyFactory.enemyTexture);
             }
         }
+        public void RessetEnemies()
+        {
+            enemies.Clear();
+            AddEnemy(new Vector2(200, 200), Color.White);
+            AddEnemy(new Vector2(50, 200), Color.White);
+            AddEnemy(new Vector2(50, 350), Color.White);
+        }
     }
 }

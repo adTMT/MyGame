@@ -272,5 +272,10 @@ namespace pong
         {
             Health = 0;
         }
+        public void resset()
+        {
+            Health = 5;
+            positie = new Vector2(1, 1);
+        }
     }
 }

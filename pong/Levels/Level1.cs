@@ -12,7 +12,7 @@ namespace pong.Levels
     internal class Level1
     {
         Level level;
-        public void Level1Setup(Texture2D tilesetTexture)
+        public void Level1Setup(Texture2D tilesetTexture, EnemyManager enemyManager, List<Coin> coins)
         {
             Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
                                                          { 0, new Rectangle(16, 64, 16, 16) },  // Vloer

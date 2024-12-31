@@ -47,6 +47,7 @@ namespace pong
         bool firsttime2 = true;
         private EnemyManager enemyManager;
         //coins
+        CoinManager coinManager;
         private List<Coin> coins;
         private Texture2D coinTexture;
         private int coinsCollected = 0;
@@ -68,7 +69,7 @@ namespace pong
 
             //muziek
             MediaPlayer.IsRepeating = true; // Laat de muziek herhalen
-            MediaPlayer.Volume = 0.5f;      // Stel het volume in (0.0 tot 1.0)
+            MediaPlayer.Volume = 0.5f;
             MediaPlayer.Play(backgroundMusic);
         }
 
@@ -89,14 +90,6 @@ namespace pong
             blokje = new Rectangle((int)positie.X + 200, (int)positie.Y+150, 50, 100);
             blokje2 = new Rectangle((int)positie.X + 400, (int)positie.Y + 150, 50, 100);
             //
-            //if (currentLevel == LevelSelect.Level1)
-            //{
-            //    LoadLevel1();
-            //}
-            //else if(currentLevel == LevelSelect.Level2)
-            //{
-            //    LoadLevel2();
-            //}
             levelManager = new LevelManager();
 
             levelManager.AddLevel(LevelSelect.Level1, CreateLevel1());
@@ -156,11 +149,11 @@ namespace pong
                 {
                     currentGameState = GameState.Won;
                 }
-                for (int i = coins.Count - 1; i >= 0; i--)
+                for (int i = coinManager.coins.Count - 1; i >= 0; i--)
                 {
-                    if (hero.CheckCollision(coins[i].Hitbox))
+                    if (hero.CheckCollision(coinManager.coins[i].Hitbox))
                     {
-                        coins.RemoveAt(i); // Verwijder de munt uit de lijst
+                        coinManager.coins.RemoveAt(i); // Verwijder de munt uit de lijst
                         coinsCollected++;  // Verhoog de teller
                     }
                 }
@@ -180,14 +173,14 @@ namespace pong
 
         private void RestartGame()
         {
-            if (currentLevel == LevelSelect.Level1)
-            {
-                RestartLevel1();
-            }
-            else if (currentLevel == LevelSelect.Level2)
-            {
-                RestartLevel2();
-            }
+            hero.resset();
+            enemyManager.RessetEnemies();
+            coinManager.setCoins(currentLevel);
+            levelManager.ResetCurrentLevel();
+            coinsCollected = 0;
+            firsttime = true;
+            firsttime2 = true;
+            currentGameState = GameState.Start;
         }
         
 
@@ -202,10 +195,7 @@ namespace pong
                 hero.Draw(_spriteBatch);
                 // Teken vijanden
                 enemyManager.DrawEnemies(_spriteBatch);
-                foreach (var coin in coins)
-                {
-                    coin.Draw(_spriteBatch);
-                }
+                coinManager.Draw(_spriteBatch);
                 DrawCoinStatus();
                 DrawHealthStatus();
 
@@ -317,15 +307,8 @@ namespace pong
             enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
             //enemyTexture.SetData(new[] { Color.Red });
             //coin
-            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
-            coins = new List<Coin>
-                    {
-                        new Coin(new Vector2(100, 100), coinTexture),
-                        new Coin(new Vector2(750, 200), coinTexture),
-                        new Coin(new Vector2(30, 200), coinTexture),
-                        new Coin(new Vector2(50, 400), coinTexture),
-                        new Coin(new Vector2(750, 400), coinTexture)
-                    };
+            coinManager = new CoinManager(Content.Load<Texture2D>("Coin-Sheetpng"));
+            coinManager.setCoins(LevelSelect.Level1);
             //level
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
             Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
@@ -367,14 +350,7 @@ namespace pong
             //enemyTexture.SetData(new[] { Color.Red });
             //coin
             coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
-            coins = new List<Coin>
-                    {
-                        new Coin(new Vector2(100, 100), coinTexture),
-                        new Coin(new Vector2(750, 95), coinTexture),
-                        new Coin(new Vector2(30, 200), coinTexture),
-                        new Coin(new Vector2(50, 400), coinTexture),
-                        new Coin(new Vector2(750, 400), coinTexture)
-                    };
+            coinManager.setCoins(LevelSelect.Level2);
             //level
             tilesetTexture = Content.Load<Texture2D>("0x72_DungeonTilesetII_v1.7");
             Dictionary<int, Rectangle> tileMapping = new Dictionary<int, Rectangle>{
@@ -405,11 +381,8 @@ namespace pong
             currentGameState = GameState.Playing;
             firsttime = true;
             firsttime2 = true;
-            hero = new Hero(_texture, new KeyBoardReader()); // Reset hero
-            enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet")); // Reset enemy manager
-            enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
+            hero.resset();
+            enemyManager.RessetEnemies();
             coinsCollected = 0;//resset coins
             coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
             coins = new List<Coin>

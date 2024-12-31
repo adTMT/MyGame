@@ -37,6 +37,10 @@ namespace pong.Levels
             // Herstel de layout naar de originele staat
             layout = originalLayout;
         }
+        public void Update(GameTime gameTime, Level level, Hero hero, EnemyManager enemyManager)
+        {
+            enemyManager.UpdateEnemies(gameTime, level, hero);
+        }
 
         // Tekenen van het level
         public void Draw(SpriteBatch spriteBatch)
