@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace pong
+namespace pong.Coinfolder
 {
     internal class Coin
     {
@@ -23,7 +23,7 @@ namespace pong
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, Position,rectangle, Color.Yellow);
+            spriteBatch.Draw(texture, Position, rectangle, Color.Yellow);
         }
     }
 }

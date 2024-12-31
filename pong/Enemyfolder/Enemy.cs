@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace pong
+namespace pong.Enemyfolder
 {
     internal class Enemy : IHealth, IEnemy
     {
@@ -22,7 +22,7 @@ namespace pong
         //volg hero variabelen
         private float followRange = 150f;
         private float speed;
-        private Vector2 snelheid = new Vector2(0,1);
+        private Vector2 snelheid = new Vector2(0, 1);
         private Vector2 snelheidx = new Vector2(1, 0);
         // Animatie variabelen
         private Animatie animatie;
@@ -54,7 +54,7 @@ namespace pong
         {
             Health -= damage;
             Console.WriteLine("Damage given");
-            
+
             if (Health <= 0)
             {
                 Die();
@@ -99,7 +99,7 @@ namespace pong
             {
                 hero.TakeDamage(1);
             }
-            
+
         }
         public void Draw(SpriteBatch spriteBatch, Texture2D texture)
         {
@@ -148,7 +148,7 @@ namespace pong
                 else
                 {
                     Positie += snelheidx;
-                    if (Positie.X > 800 -64|| Positie.X < 0)
+                    if (Positie.X > 800 - 64 || Positie.X < 0)
                     {
                         snelheidx.X *= -1;
                     }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace pong
+namespace pong.Coinfolder
 {
     class CoinManager
     {
@@ -30,7 +30,7 @@ namespace pong
                         new Coin(new Vector2(750, 400), coinTexture)
                     };
             }
-            else if(lvl == LevelSelect.Level2)
+            else if (lvl == LevelSelect.Level2)
             {
                 coins = new List<Coin>
                     {
@@ -44,7 +44,7 @@ namespace pong
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach(var coin in coins)
+            foreach (var coin in coins)
             {
                 coin.Draw(spriteBatch);
             }

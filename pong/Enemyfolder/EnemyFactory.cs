@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace pong
+namespace pong.Enemyfolder
 {
     internal class EnemyFactory
     {

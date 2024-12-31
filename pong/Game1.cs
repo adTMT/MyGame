@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using pong.Coinfolder;
+using pong.Enemyfolder;
 using pong.Input;
 using pong.Levels;
 using System;
