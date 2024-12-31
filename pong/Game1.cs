@@ -376,45 +376,5 @@ namespace pong
             level2.LoadLevel(levelLayout);
             return level2;
         }
-        private void RestartLevel1()
-        {
-            currentGameState = GameState.Playing;
-            firsttime = true;
-            firsttime2 = true;
-            hero.resset();
-            enemyManager.RessetEnemies();
-            coinsCollected = 0;//resset coins
-            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
-            coins = new List<Coin>
-                    {
-                        new Coin(new Vector2(100, 100), coinTexture),
-                        new Coin(new Vector2(750, 200), coinTexture),
-                        new Coin(new Vector2(30, 200), coinTexture),
-                        new Coin(new Vector2(50, 400), coinTexture),
-                        new Coin(new Vector2(750, 400), coinTexture)
-                    };
-        }
-        private void RestartLevel2()
-        {
-            currentGameState = GameState.Playing;
-            firsttime = true;
-            firsttime2 = true;
-            hero = new Hero(_texture, new KeyBoardReader()); // Reset hero
-            enemyManager = new EnemyManager(Content.Load<Texture2D>("Ghost-Sheet")); // Reset enemy manager
-            enemyManager.AddEnemy(new Vector2(200, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 200), Color.White);
-            enemyManager.AddEnemy(new Vector2(50, 350), Color.White);
-            coinsCollected = 0;//resset coins
-            coinTexture = Content.Load<Texture2D>("Coin-Sheetpng");
-            coins = new List<Coin>
-                    {
-                        new Coin(new Vector2(100, 100), coinTexture),
-                        new Coin(new Vector2(750, 95), coinTexture),
-                        new Coin(new Vector2(30, 200), coinTexture),
-                        new Coin(new Vector2(50, 400), coinTexture),
-                        new Coin(new Vector2(750, 400), coinTexture)
-                    };
-        }
-
     }
 }
